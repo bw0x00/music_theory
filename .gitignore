@@ -1,6 +1,9 @@
 # Project structre
 generate/*
 
+# vim swap
+*.swp
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
