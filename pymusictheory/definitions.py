@@ -34,7 +34,7 @@ tone_distances = {
     }
 }
 
-scales_steps = {
+scales_steps_12 = {
     'major'             : [2,2,1,2,2,2,1],
     'harmonic_major'    : [2,2,1,2,1,3,1],
     'melodic_major'     : [2,2,1,2,1,2,2],
