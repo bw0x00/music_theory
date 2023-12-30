@@ -50,8 +50,9 @@ class ChromaticScale:
         if match:
             (note_name, octave) = match.groups()
         a = self._temperament.get_note(note[1],
-                                       (-1)*self._tone_distance[note_name], precision=4)
-        return a / 2**int(octave)
+                                       (-1)*( 12*int(octave) + self._tone_distance[note_name]),
+                                       precision=4)
+        return a
 
 
 class Scale(ChromaticScale):

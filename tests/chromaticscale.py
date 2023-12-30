@@ -8,7 +8,7 @@ class TestChromaticScale(unittest.TestCase):
 
     def testSCIScale(self):
         sci = ChromaticScale(note=('c3', 256))
-        self.assertTrue(sci.get_octaves()[0][0] == 26.91)
+        self.assertTrue(round(sci.get_octaves()[0][0],2) == 26.91)
         self.assertTrue(sci.get_octaves()[3][3] == 256.0)
 
     def testStandardScale(self):
