@@ -41,7 +41,7 @@ class ChromaticScale:
         ret = list()
         for i in range(len(self._temperament)+1):
             ret.append(
-                self._temperament.get_note(self._freqA0*2**octave_number, i))
+                self._temperament.get_note(self._freqA0, 12*octave_number + i))
         return ret
 
     def _calcA0(self, note, temperament):
