@@ -2,11 +2,11 @@
 
 import re
 
-from definitions import *
+from .definitions import *
 
 
 class ChromaticScale:
-    _number_octaves = 9
+    _number_octaves = 8
 
     def __init__(self, note=('a4', 440), temperament=temperament['12TET'],
                  tone_distance=tone_distances['12']):
