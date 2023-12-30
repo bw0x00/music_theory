@@ -55,45 +55,39 @@ class ChromaticScale:
         return a / 2**int(octave)
 
 
-
 class Scale(ChromaticScale):
 
-    def __init__(self, root='c',scale='major', _scales_steps=scales_steps_12,
-                 note=('a4',440), temperament=temperament['12TET'],
+    def __init__(self, root='c', scale='major', _scales_steps=scales_steps_12,
+                 note=('a4', 440), temperament=temperament['12TET'],
                  tone_distance=tone_distances['12']):
-            if sum(_scales_steps[scale]) != len(temperament):
-                raise ValueError('sum(scalesteps) != len(temperament)')
+        if sum(_scales_steps[scale]) != len(temperament):
+            raise ValueError('sum(scalesteps) != len(temperament)')
 
-            try:
-                tone_distance[root]
-            except KeyError:
-                raise ValueError('Undefined root note')
+        try:
+            tone_distance[root]
+        except KeyError:
+            raise ValueError('Undefined root note')
 
-            self._scale_steps =  _scales_steps[scale]
-            self._root = root
+        self._scale_steps = _scales_steps[scale]
+        self._root = root
 
-            super().__init__(note,temperament,tone_distance)
-            self._indices =  self._calc_filter()
-
+        super().__init__(note, temperament, tone_distance)
+        self._indices = self._calc_filter()
 
     def get_scale(self) -> list:
         reverse_tone_distance = dict()
         for k in self._tone_distance:
             if self._tone_distance[k] not in reverse_tone_distance:
-                reverse_tone_distance[self._tone_distance[k]] = k
+                reverse_tone_distance[self._tone_distance[k]] = [k]
             else:
-                reverse_tone_distance[self._tone_distance[k]] = \
-                    (reverse_tone_distance[self._tone_distance[k]],
-                                                 k)
+                reverse_tone_distance[self._tone_distance[k]].append(k)
         scale = []
         for k in self._indices:
             try:
                 scale.append(reverse_tone_distance[k])
             except KeyError:
                 pass
-        print(self._indices)
         return scale
-
 
     def _calc_filter(self):
         indices = []
@@ -105,14 +99,13 @@ class Scale(ChromaticScale):
                 indices.append(len(self._temperament))
         return indices
 
-
     def get_octaves(self):
         octaves = dict()
         for octave in self._octaves:
             octaves[octave] = []
             for k in sorted(self._indices):
                 octaves[octave].append(self._octaves[octave][k])
-        return octaves 
+        return octaves
 
 
 def test():
@@ -126,11 +119,12 @@ def test():
     cmaj = Scale()
     print(cmaj.get_scale())
     print("\nA Moll/ Minor")
-    amin = Scale(root='a', scale='minor' )
+    amin = Scale(root='a', scale='minor')
     print(amin.get_scale())
     print("\nC# Moll/ Minor")
-    cmin = Scale(root='c#', scale='minor' )
+    cmin = Scale(root='c#', scale='minor')
     print(cmin.get_scale())
+
 
 if __name__ == "__main__":
     test()
