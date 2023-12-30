@@ -8,13 +8,14 @@ class TestChromaticScale(unittest.TestCase):
 
     def testSCIScale(self):
         sci = ChromaticScale(note=('c3', 256))
-        self.assertTrue(sci.get_octaves()[0][0] == Fraction(128, 5))
-        self.assertTrue(sci.get_octaves()[3][3] == 256)
+        self.assertTrue(sci.get_octaves()[0][0] == 26.91)
+        self.assertTrue(sci.get_octaves()[3][3] == 256.0)
 
     def testStandardScale(self):
-        sci = ChromaticScale(note=('a4', 440))
-        self.assertTrue(sci.get_octaves()[0][0] == 27.5)
-        self.assertTrue(sci.get_octaves()[4][0] == 440)
+        sc = ChromaticScale(note=('a4', 440))
+        self.assertTrue(sc.get_octaves()[0][0] == 27.5)
+        self.assertTrue(sc.get_octaves()[4][0] == 440)
+        self.assertTrue(sc.get_octaves()[1][10] == 98.0)
 
 
 if __name__ == '__main__':

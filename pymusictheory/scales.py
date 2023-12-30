@@ -3,22 +3,20 @@
 import re
 
 from .definitions import *
+from .converter import distance_to_note
 
 
 class ChromaticScale:
     _number_octaves = 8
 
     def __init__(self, note=('a4', 440), temperament=temperament['12TET'],
-                 tone_distance=tone_distances['12']):
+                 tone_distance=tone_distances[12]):
         """ Creates Chromatic Scale from given note (Scientific Pitch Notation)
         and a temperament distance list. For non-12 steps scales, a list of
         tone with the correpsonding half-tone distance must be be provided in addition. Default: A4=440Hz and 12TET"""
-        if sum(temperament) != 1:
-            raise ValueError('Fractions in "temperament" ' +
-                             str(temperament) + '  don\'t sum up to 1')
 
         if len(set([x for x in tone_distance.values()])) != len(temperament):
-            raise ValueError('len(temperament) != amount of tones in ' +
+            raise ValueError('temperament does not fit to the amount of tones in ' +
                              'tone_distance')
 
         self._temperament = temperament
@@ -27,6 +25,8 @@ class ChromaticScale:
         self._calc_octaves()
 
     def get_octaves(self):
+        """ returns a full octave from An to An+1 (including). i.e., the list
+        is len(temperament)+1 """
         return self._octaves
 
     def _calc_octaves(self):
@@ -34,16 +34,14 @@ class ChromaticScale:
         self._octaves = dict()
         start = self._freqA0
         for octave in range(self._number_octaves+1):
-            self._octaves[octave] = self._calc_octave(start)
+            self._octaves[octave] = self._calc_octave(octave)
             start = self._octaves[octave][-1]
 
-    def _calc_octave(self, start):
+    def _calc_octave(self, octave_number):
         ret = list()
-        ret.append(start)
-        element = 0
-        for i in range(len(self._temperament)):
-            element = element + self._temperament[i]
-            ret.append(start + start * element)
+        for i in range(len(self._temperament)+1):
+            ret.append(
+                self._temperament.get_note(self._freqA0*2**octave_number, i))
         return ret
 
     def _calcA0(self, note, temperament):
@@ -51,15 +49,18 @@ class ChromaticScale:
         match = re.match(r"([abcdefg][b#]?)([0-9])", note[0].lower(), re.I)
         if match:
             (note_name, octave) = match.groups()
-        a = note[1] / (1 + sum(temperament[0:self._tone_distance[note_name]]))
+        a = self._temperament.get_note(note[1],
+                                       (-1)*self._tone_distance[note_name], precision=4)
         return a / 2**int(octave)
 
 
 class Scale(ChromaticScale):
 
-    def __init__(self, root='c', scale='major', _scales_steps=scales_steps_12,
+    def __init__(self, root='c', scale='major',
+                 _scales_steps=scales_steps[12],
                  note=('a4', 440), temperament=temperament['12TET'],
-                 tone_distance=tone_distances['12']):
+                 tone_distance=tone_distances[12]):
+        """ Creates a scale of type 'scale' for 'root'  """
         if sum(_scales_steps[scale]) != len(temperament):
             raise ValueError('sum(scalesteps) != len(temperament)')
 
@@ -75,12 +76,8 @@ class Scale(ChromaticScale):
         self._indices = self._calc_filter()
 
     def get_scale(self) -> list:
-        reverse_tone_distance = dict()
-        for k in self._tone_distance:
-            if self._tone_distance[k] not in reverse_tone_distance:
-                reverse_tone_distance[self._tone_distance[k]] = [k]
-            else:
-                reverse_tone_distance[self._tone_distance[k]].append(k)
+        """ Returns the notes of the scale as an list """
+        reverse_tone_distance = distance_to_note(self._tone_distance)
         scale = []
         for k in self._indices:
             try:
@@ -100,6 +97,7 @@ class Scale(ChromaticScale):
         return indices
 
     def get_octaves(self):
+        """ Returns the frequencies of all hearable octaves """
         octaves = dict()
         for octave in self._octaves:
             octaves[octave] = []
@@ -108,23 +106,5 @@ class Scale(ChromaticScale):
         return octaves
 
 
-def test():
-    print("Chromatic Scale")
-    a4 = ChromaticScale()
-    c3_sci = ChromaticScale(note=('c3', 256))
-    print('A4: ' + str(a4.get_octaves()))
-    print('C3_SCI: ' + str(c3_sci.get_octaves()))
-
-    print("\nC Dur/ Major")
-    cmaj = Scale()
-    print(cmaj.get_scale())
-    print("\nA Moll/ Minor")
-    amin = Scale(root='a', scale='minor')
-    print(amin.get_scale())
-    print("\nC# Moll/ Minor")
-    cmin = Scale(root='c#', scale='minor')
-    print(cmin.get_scale())
-
-
 if __name__ == "__main__":
-    test()
+    pass
