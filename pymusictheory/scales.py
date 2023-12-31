@@ -85,6 +85,21 @@ class Scale(ChromaticScale):
                 pass
         return scale
 
+    def get_scale_frequencies(self,start_octave=4) -> list:
+        """ Returns one octave of the starting with the root key in octave
+        'start_octave' """
+        reverse_semitone_distance = distance_to_note(self._semitone_distance)
+        scale = []
+        start_freq = self._calc_octave(start_octave)[self._semitone_distance[self._root]]
+        i = 0
+        for k in self._scale_steps:
+            try:
+                scale.append(self._temperament.get_note(start_freq,i))
+                i = i + k
+            except KeyError:
+                pass
+        return scale
+
     def _calc_filter(self):
         indices = []
         i = self._semitone_distance[self._root]
@@ -96,13 +111,14 @@ class Scale(ChromaticScale):
         return indices
 
     def get_octaves(self):
-        """ Returns the frequencies of all hearable octaves """
-        octaves = dict()
-        for octave in self._octaves:
-            octaves[octave] = []
-            for k in sorted(self._indices):
-                octaves[octave].append(self._octaves[octave][k])
-        return octaves
+        """ Returns the frequencies of the scale in all octaves in the used chromatic scale """
+        pass
+#        octaves = dict()
+#        for octave in self._octaves:
+#            octaves[octave] = []
+#            for k in sorted(self._indices):
+#                octaves[octave].append(self._octaves[octave][k])
+#        return octaves
 
 
 if __name__ == "__main__":

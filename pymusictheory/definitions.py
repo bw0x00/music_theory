@@ -49,13 +49,13 @@ semitone_distances = {
 # scale name to semitone distance from root
 scales_steps = {
     12 : {
-        'major'             : (2,2,1,2,2,2,1),
-        'harmonic_major'    : (2,2,1,2,1,3,1),
-        'melodic_major'     : (2,2,1,2,1,2,2),
-        'minor'             : (2,1,2,2,1,2,2),
-        'harmonic_minor'    : (2,1,2,2,1,3,1),
-        'melodic_minor_up'  : (2,1,2,2,2,2,1),
-        'melodic_minor_down': (2,2,1,2,2,1,2)
+        'major'                         : (2,2,1,2,2,2,1),
+        'harmonic_major'                : (2,2,1,2,1,3,1),
+        'melodic_major'                 : (2,2,1,2,1,2,2),
+        'minor'                         : (2,1,2,2,1,2,2),
+        'harmonic_minor'                : (2,1,2,2,1,3,1),
+        'ascending_melodic_minor'       : (2,1,2,2,2,2,1),
+        'descending_melodic_minor'      : (2,2,1,2,2,1,2)
     }
 }
 

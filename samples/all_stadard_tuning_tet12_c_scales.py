@@ -6,24 +6,27 @@ from pymusictheory.definitions import *
 
 def main():
     print("Generating all scales as defined in " +
-          "pymusictheory.definitions.scales_steps")
+          "pymusictheory.definitions.scales_steps for standard tuning with " +
+          "12TET")
     print("Writing output into folder: " + sys.argv[1])
 
     dirname = sys.argv[1]
     root_note = "C"
+    octave = 4
 
     if not os.path.isdir(dirname):
         print("Output dir does not exist: " + dirname)
 
     for temperament in scales_steps:
         for scale in scales_steps[temperament]:
-            filename = "".join(("scale_",root_note,"_", scale,".txt"))
+            filename = "".join(("scale_",root_note,str(octave),"_", scale,".txt"))
             print("".join(("> Scale '",root_note,"_", scale, "': ", dirname,"/",filename )) )
-            try:
-                f = open("/".join((dirname,filename)),'w') 
-            except Exception as e:
-                print("Cannot open file " + "/".join((dirname,filename)) )
-                raise e
+            with open("/".join((dirname,filename)),'w') as f:
+                s = Scale(scale=scale)
+                notes = s.get_scale()
+                freqs = s.get_scale_frequencies(octave)
+                for i in range(len(notes)):
+                    print(" : ".join((",".join(notes[i]),str(freqs[i]))),file=f)
 
 if __name__ == '__main__':
     main()
