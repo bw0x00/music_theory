@@ -11,12 +11,12 @@ class Chord:
         """ Creates a Chord object for root and chord. """
         self._scale = chromaticscale
         self._temperament_length = len(self._scale.get_octaves()[0])-1
-        self._root_index = tone_distances[self._temperament_length][root]
+        self._root_index = semitone_distances[self._temperament_length][root]
         self._chord = chord_integer[self._temperament_length][chord]
 
     def get_chord(self):
         """ Returns the list with the notes of the chord """
-        td = tone_distances[self._temperament_length]
+        td = semitone_distances[self._temperament_length]
         rtd = distance_to_note(td)
         chord = []
         for note in self._chord:
@@ -28,7 +28,7 @@ class Chord:
         frequencies of multiple octaves. Optional: An list of octave numbers
         can be provided. List must be of equal length to the chord and
         transposes the corresponding chord note into the given octave. """
-        td = tone_distances[self._temperament_length]
+        td = semitone_distances[self._temperament_length]
         chord = self.get_chord()
         if voicing is None:
             voicing = [3] * len(chord)

@@ -24,25 +24,25 @@ def init_temperament():
 init_temperament()
 
 # note to semi tone distance to A
-tone_distances = {
+semitone_distances = {
     12: {
-        'a' : 0,
-        'a#': 1,
-        'bb': 1,
-        'b' : 2,
-        'c' : 3,
-        'c#': 4,
-        'db': 4,
-        'd' : 5,
-        'd#': 6,
-        'eb': 6,
-        'e' : 7,
-        'f' : 8,
-        'f#': 9,
-        'gb': 9,
-        'g' : 10,
-        'g#': 11,
-        'ab': 11
+        'a' : 9,
+        'a#': 10,
+        'bb': 10,
+        'b' : 11,
+        'c' : 0,
+        'c#': 1,
+        'db': 1,
+        'd' : 2,
+        'd#': 3,
+        'eb': 3,
+        'e' : 4,
+        'f' : 5,
+        'f#': 6,
+        'gb': 6,
+        'g' : 7,
+        'g#': 8,
+        'ab': 8
     }
 }
 
