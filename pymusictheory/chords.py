@@ -31,7 +31,7 @@ class Chord:
         td = semitone_distances[self._temperament_length]
         chord = self.get_chord()
         if voicing is None:
-            voicing = [3] * len(chord)
+            voicing = [4] * len(chord)
         freqs = []
         for e in range(len(chord)):
             freqs.append(self._scale.get_octaves()[

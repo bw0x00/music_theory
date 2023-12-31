@@ -63,6 +63,7 @@ scales_steps = {
 chord_integer = {
     12 : {
         'major'             : (0,4,7),
+        'major7'            : (0,4,7,11),
         'minor'             : (0,3,7)
     }
 }

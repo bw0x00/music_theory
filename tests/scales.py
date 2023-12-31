@@ -6,17 +6,17 @@ from pymusictheory.scales import Scale
 
 class TestScale(unittest.TestCase):
 
-    def testCmaj(self):
+    def test_cmaj(self):
         Cmaj = [['c'], ['d'], ['e'], ['f'], ['g'], ['a'], ['b']]
         s = Scale(root='c', scale='major')
         self.assertTrue(s.get_scale() == Cmaj)
 
-    def testAmin(self):
+    def test_amin(self):
         Amin = [['a'], ['b'], ['c'], ['d'], ['e'], ['f'], ['g']]
         s = Scale(root='a', scale='minor')
         self.assertTrue(s.get_scale() == Amin)
 
-    def testCsharpmin(self):
+    def test_csharpmin(self):
         Csharpmin = [['c#', 'db'], ['d#', 'eb'], ['e'],
                      ['f#', 'gb'], ['g#', 'ab'], ['a'], ['b']]
         s = Scale(root='c#', scale='minor')
