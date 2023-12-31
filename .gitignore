@@ -1,5 +1,5 @@
 # Project structre
-generate/*
+doc/generated/*
 
 # vim swap
 *.swp
