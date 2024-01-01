@@ -4,7 +4,7 @@ from fractions import Fraction
 from pymusictheory.notes import Note, PitchClass
 
 
-class TestChords(unittest.TestCase):
+class TestNodes(unittest.TestCase):
 
     def test_init(self):
         a4 = Note('A4')

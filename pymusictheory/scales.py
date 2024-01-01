@@ -37,7 +37,7 @@ class ChromaticScale:
         self._temperament = temperament
         self._semitone_distance = semitone_distance
         self._anchor=note[1]
-        self._anchor_distance=self.calc_distance_to_C0(note[0])
+        self._anchor_distance=self.SPN_to_distance(note[0])
 
     def get_octaves(self):
         """ returns a full octave from An to An+1 (including). i.e., the list
@@ -56,7 +56,7 @@ class ChromaticScale:
                                            12*octave_number-self._anchor_distance + i))
         return ret
 
-    def calc_distance_to_C0(self,note):
+    def SPN_to_distance(self,note):
         """ Calculates semitone distance of note in SPN to C0 """
         match = re.match(r"([abcdefg][b#]?)([0-9])", note.lower(), re.I)
         if match:

@@ -20,10 +20,10 @@ class TestChromaticScale(unittest.TestCase):
 
     def test_conversion(self):
         sc = ChromaticScale(note=('a4', 440))
-        dist = sc.calc_distance_to_C0('a4')
-        print(sc.name_from_distance_to_C0(dist))
+        dist = sc.SPN_to_distance('a4')
         self.assertTrue( sc.frequencyof(dist) == 440)
-        self.assertTrue( sc.name_from_distance_to_C0(dist) == 'a4')
+        self.assertTrue( sc.frequencyof(2*12+7) == 98.0)
+        self.assertTrue( sc.SPN_from_distance(dist) == 'a4')
 
 
 if __name__ == '__main__':
