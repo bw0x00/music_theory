@@ -5,6 +5,19 @@ import re
 from .definitions import *
 from .converter import distance_to_note
 
+# scale name to semitone distance from root
+scales_steps = {
+    12 : {
+        'major'                         : (2,2,1,2,2,2,1),
+        'harmonic_major'                : (2,2,1,2,1,3,1),
+        'melodic_major'                 : (2,2,1,2,1,2,2),
+        'minor'                         : (2,1,2,2,1,2,2),
+        'harmonic_minor'                : (2,1,2,2,1,3,1),
+        'ascending_melodic_minor'       : (2,1,2,2,2,2,1),
+        'descending_melodic_minor'      : (2,2,1,2,2,1,2)
+    }
+}
+
 
 class ChromaticScale:
     _number_octaves = 9
@@ -51,6 +64,17 @@ class ChromaticScale:
         else:
             raise ValueError('Bad note name. Note name in SPN required')
         return int(octave) * 12 + self._semitone_distance[note_name]
+
+    def SPN_from_distance(self, distance: int):
+        l = len(self._temperament)
+        note = distance_to_note(self._semitone_distance)[distance % l]
+        octave = int( ( distance-distance % l ) / l )
+        return ''.join((note[0],str(octave)))
+
+
+    def frequencyof(self, distancetoc0):
+        return self._temperament.get_note(self._anchor,
+                                           distancetoc0-self._anchor_distance)
 
 
 class Scale(ChromaticScale):

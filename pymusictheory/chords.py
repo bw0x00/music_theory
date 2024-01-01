@@ -4,6 +4,14 @@ from .definitions import *
 from .scales import ChromaticScale
 from .converter import distance_to_note
 
+# chord name to integeter notation mapping (semitone distance from root)
+chord_integer = {
+    12 : {
+        'major'             : (0,4,7),
+        'major7'            : (0,4,7,11),
+        'minor'             : (0,3,7)
+    }
+}
 
 class Chord:
 

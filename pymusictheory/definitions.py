@@ -46,27 +46,6 @@ semitone_distances = {
     }
 }
 
-# scale name to semitone distance from root
-scales_steps = {
-    12 : {
-        'major'                         : (2,2,1,2,2,2,1),
-        'harmonic_major'                : (2,2,1,2,1,3,1),
-        'melodic_major'                 : (2,2,1,2,1,2,2),
-        'minor'                         : (2,1,2,2,1,2,2),
-        'harmonic_minor'                : (2,1,2,2,1,3,1),
-        'ascending_melodic_minor'       : (2,1,2,2,2,2,1),
-        'descending_melodic_minor'      : (2,2,1,2,2,1,2)
-    }
-}
-
-# chord name to integeter notation mapping (semitone distance from root)
-chord_integer = {
-    12 : {
-        'major'             : (0,4,7),
-        'major7'            : (0,4,7,11),
-        'minor'             : (0,3,7)
-    }
-}
 
 if __name__ == "__main__":
     pass
