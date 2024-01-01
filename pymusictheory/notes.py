@@ -17,12 +17,11 @@ class Note:
             self._shared_init(note.distance, chromaticscale)
         else:
             raise ValueError("Note must be initilized with SPN, int distance to C0" +
-                         " or a frequence")
-
+                             " or a frequence")
 
     @__init__.register
     def _1(self, note: int, chromaticscale=ChromaticScale()):
-        self._shared_init(distancetoc0=note,chromaticscale=chromaticscale)
+        self._shared_init(distancetoc0=note, chromaticscale=chromaticscale)
 
     @__init__.register
     def _2(self, note: float, chromaticscale=ChromaticScale()):
@@ -36,11 +35,11 @@ class Note:
 
         if not success:
             raise ValueError("Frequency does not match any note in used" +
-                                " chromatic scale")
+                             " chromatic scale")
 
     @__init__.register
     def _3(self, note: str, chromaticscale=ChromaticScale()):
-        self._shared_init(chromaticscale.SPN_to_distance(note),chromaticscale)
+        self._shared_init(chromaticscale.SPN_to_distance(note), chromaticscale)
 
     def _shared_init(self, distancetoc0, chromaticscale):
         self._name = chromaticscale.SPN_from_distance(distancetoc0)
@@ -48,7 +47,8 @@ class Note:
         self._chromaticscale = chromaticscale
 
     @singledispatchmethod
-    def __eq__(self,a):
+    def __eq__(self, a):
+        """ Equal tests based on SPN, frequency or distance """
         if type(a) == type(self):
             return a.name == self.name
         else:
@@ -63,7 +63,7 @@ class Note:
 
     @__eq__.register
     def _2(self, a: float):
-        # TODO: improve performance
+        # TODO: improve performance and move into chromatic scale
         octaves = self._chromaticscale.get_octaves()
         for octave in octaves:
             for note in octaves[octave]:
@@ -76,7 +76,7 @@ class Note:
         return a.lower() == self.name
 
     @singledispatchmethod
-    def __gt__(self,a):
+    def __gt__(self, a):
         if type(a) == type(self):
             return a.distance < self.distance
         else:
@@ -84,7 +84,7 @@ class Note:
 
     @__gt__.register
     def _1(self, a: int):
-        return a <  self.distance
+        return a < self.distance
 
     @__gt__.register
     def _2(self, a: float):
@@ -95,7 +95,7 @@ class Note:
         return self._chromaticscale.SPN_to_distance(a) < self.distance
 
     @singledispatchmethod
-    def __lt__(self,a):
+    def __lt__(self, a):
         if type(a) == type(self):
             return a.distance > self.distance
         else:
@@ -103,7 +103,7 @@ class Note:
 
     @__lt__.register
     def _1(self, a: int):
-        return a >  self.distance
+        return a > self.distance
 
     @__lt__.register
     def _2(self, a: float):
@@ -113,7 +113,36 @@ class Note:
     def _3(self, a: str):
         return self._chromaticscale.SPN_to_distance(a) > self.distance
 
+    def __add__(self, a):
+        return Note(self.distance+a, self._chromaticscale)
 
+    def __mul__(self, a):
+        """ Note can be multiplied with numbers > 0. Multiplication of a note
+        is implemented as the addition of (a-1)*octave_length semitone steps. """
+        if a >= 1:
+            return Note(round(self.distance+(a-1)*self._chromaticscale.temperament.length),
+                        self._chromaticscale)
+        elif 0 < a < 1:
+            return self/(1/a)
+        else:
+            raise TypeError(
+                "Multiplication of 'Note' with numbers <= 0 not allowed")
+
+    def __rtruediv__(self, a: int):
+        """ not implemented; Throws TypeError if called """
+        raise TypeError("Cannot divide by 'Note'")
+
+    def __truediv__(self, a):
+        """ Note can be divided by numbers > 0. Devision of a note is
+        implemented as the substraction of (a-1)*octave_length semitone steps. """
+        if a >= 1:
+            return Note(round(self.distance-(a-1)*self._chromaticscale.temperament.length),
+                        self._chromaticscale)
+        elif 1 > a > 0:
+            return self * (1/a)
+        else:
+            raise ValueError(
+                "Division of 'Note' with numbers <= 0 not allowed")
 
     def __str__(self):
         return self._name
@@ -137,6 +166,7 @@ class PitchClass:
     def __init__(self, note, chromaticscale=ChromaticScale()):
         """ Creates the PitchClass containing 'note' """
         pass
+
 
 if __name__ == '__main__':
     pass

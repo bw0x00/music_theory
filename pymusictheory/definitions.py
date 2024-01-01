@@ -15,6 +15,10 @@ class TwelveTET():
     def get_note(self,root,distance,precision=2):
         return round(root * ( (2**Fraction(1,12)) **distance),precision)
 
+    @property
+    def length(self):
+        return self._len
+
 temperament = dict()
 
 def init_temperament():

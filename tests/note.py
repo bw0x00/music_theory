@@ -17,20 +17,26 @@ class TestNodes(unittest.TestCase):
         a4_2 = Note('A4')
         pc_a = PitchClass('A')
         pc_d = PitchClass('d')
-        self.assertTrue( a4 == 'A4')
-        self.assertTrue( a4_2 == 'A4')
-        self.assertTrue( a4 != 'C4')
-        self.assertTrue( a4 == 440)
-        self.assertTrue( a4 < 'A#4')
-        self.assertTrue( a4 > 'Ab4')
-        self.assertTrue( a4 in pc_a)
-        self.assertTrue( a4 not in pc_d)
+        self.assertTrue(a4 == 'A4')
+        self.assertTrue(a4_2 == 'A4')
+        self.assertTrue(a4 != 'C4')
+        self.assertTrue(a4 == 440)
+        self.assertTrue(a4 < 'A#4')
+        self.assertTrue(a4 > 'Ab4')
+        self.assertTrue(a4 in pc_a)
+        self.assertTrue(a4 not in pc_d)
 
     def test_math_opertor(self):
         a4 = Note('A4')
-        self.assertTrue( a4+12 == a4*2 )
-        self.assertTrue( a4+2*12 == a4*2*2 )
-        self.assertTrue( a4/(2**4) == 'A0' )
+        self.assertTrue(a4+12 == a4*2)
+        self.assertTrue(a4+2*12 == a4*2*2)
+        with self.assertRaises(TypeError):
+            4/a4
+        with self.assertRaises(ValueError):
+            a4/0
+        self.assertTrue(a4/5 == 'A0')
+        self.assertTrue(a4/2 == a4*0.5)
+        self.assertTrue(a4/0.5 == a4*2)
 
     def test_pitchclass(self):
         a4 = Note('A4')
@@ -39,8 +45,9 @@ class TestNodes(unittest.TestCase):
         pc_d = PitchClass('d')
         i = 0
         for note in pc_a:
-            self.assertTrue(pc_a[i] == ''.join(('a',str(i))) )
+            self.assertTrue(pc_a[i] == ''.join(('a', str(i))))
             i += 1
+
 
 if __name__ == '__main__':
     unittest.main()
