@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
 from functools import singledispatchmethod
+import re
 
 from .definitions import *
 from .scales import ChromaticScale
-from .converter import distance_to_note
 
 
 class Note:
@@ -164,9 +164,33 @@ class Note:
 class PitchClass:
 
     def __init__(self, note, chromaticscale=ChromaticScale()):
-        """ Creates the PitchClass containing 'note' """
-        pass
+        """ Creates the PitchClass containing 'note'; 'note' can be any of SPN,
+        distance to C0, PitchClass numeric (c=0,...) or frequency """
+        try:
+            n = Note(note)
+        except ValueError:
+            # if note name and not SPN is provided...
+            n = Note("".join((note,'0')))
 
+        self._chromaticscale = chromaticscale
+
+        self._pc_numeric = n.distance % chromaticscale.temperament.length
+        self._pc_name = chromaticscale.split_SPN(n.name)[0]
+        pc = list()
+        octaves = chromaticscale.get_octaves()
+        for octave in octaves:
+            pc.append(Note(self._pc_numeric)*(octave+1))
+        self._pc = pc
+
+
+    def __iter__(self):
+        return self._pc.__iter__()
+
+    def __str__(self):
+        return str(", ".join((str(x) for x in self._pc)))
+
+    def __getitem__(self,n):
+        return self._pc[n] 
 
 if __name__ == '__main__':
     pass

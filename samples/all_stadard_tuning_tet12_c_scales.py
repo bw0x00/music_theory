@@ -1,7 +1,7 @@
 #!/bin/env python3
 
 import sys,os
-from pymusictheory.scales import Scale
+from pymusictheory.scales import Scale, scales_steps
 from pymusictheory.definitions import *
 
 def main():
@@ -17,8 +17,8 @@ def main():
     if not os.path.isdir(dirname):
         print("Output dir does not exist: " + dirname)
 
-    for temperament in scales_steps:
-        for scale in scales_steps[temperament]:
+    for t in temperament:
+        for scale in scales_steps[temperament[t].length]:
             filename = "".join(("scale_",root_note,str(octave),"_", scale,".txt"))
             print("".join(("> Scale '",root_note,"_", scale, "': ", dirname,"/",filename )) )
             with open("/".join((dirname,filename)),'w') as f:

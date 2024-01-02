@@ -7,7 +7,7 @@ from pymusictheory.chords import Chord
 class TestChords(unittest.TestCase):
 
     def test_chord(self):
-        Cmaj = [['c'],  ['e'],  ['g']]
+        Cmaj = ['c4',  'e4',  'g4']
         s = Chord(root='c', chord='major')
         self.assertTrue(s.get_chord() == Cmaj)
 
