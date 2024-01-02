@@ -1,6 +1,6 @@
 doc_generated := doc/generated
 
-default: clean prepare test examples 
+default: test clean prepare examples 
 
 prepare:
 	mkdir $(doc_generated)

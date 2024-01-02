@@ -2,7 +2,8 @@
 
 import re
 
-from .definitions import *
+from .temperament import *
+from . import notes
 
 # scale name to semitone distance from root
 scales_steps = {
@@ -18,7 +19,8 @@ scales_steps = {
         }
 
 
-class ChromaticScale:
+# Indirection required to allow scales to work with Note objects
+class ChromaticScale(CoreChromaticScale):
     _number_octaves = 9
 
     def __init__(self, note=('a4', 440), temperament=temperament['12TET']):
@@ -26,12 +28,7 @@ class ChromaticScale:
         and a temperament distance list. For non-12 steps scales, a list of
         tone with the correpsonding half-tone distance must be be provided in addition. Default: A4=440Hz and 12TET"""
 
-        if temperament.get_note(note[1],len(temperament)) != note[1]*2:
-            raise ValueError('len(temperament) != one octave')
-
-        self._temperament = temperament
-        self._anchor=note[1]
-        self._anchor_distance=self.SPN_to_distance(note[0])
+        super().__init__(note, temperament)
 
     def get_octaves(self):
         """ returns a full octave from An to An+1 (including). i.e., the list
@@ -42,40 +39,20 @@ class ChromaticScale:
         return octaves
 
     def _calc_octave(self, octave_number):
-        """ Calculates the octave number n from Cn to Cn+1 """
+        """ Calculates the octave number n from Cn to Cn+1 and returns it as a
+        list of Note objects"""
         ret = list()
         for i in range(len(self._temperament)+1):
-            ret.append(
-                    self._temperament.get_note(self._anchor,
-                                               12*octave_number-self._anchor_distance + i))
+            ret.append(notes.Note(i+self.temperament.length*octave_number,
+                            chromaticscale=self))
         return ret
 
-    @property
-    def temperament(self):
-        return self._temperament
-
-    def SPN_to_distance(self,note):
-        """ Calculates semitone distance of note in SPN to C0 """
-        (note_name, octave) = self.split_SPN(note)
-        return int(octave) * self.temperament.length + self.temperament.name_to_distance(note_name)
-
-    def SPN_from_distance(self, distance: int):
-        l = len(self._temperament)
-        note = self._temperament.distance_to_name(distance % l)
-        octave = int( ( distance-distance % l ) / l )
-        return ''.join((note[0],str(octave)))
-
-    def split_SPN(self, spn: str):
-        match = re.match(r"([abcdefg][b#]?)([0-9])", spn.lower(), re.I)
-        if match:
-            return match.groups()
-        else:
-            raise ValueError(f'Bad note name {spn}. Note name in SPN required')
-
-
-    def frequencyof(self, distancetoc0):
-        return self._temperament.get_note(self._anchor,
-                                          distancetoc0-self._anchor_distance)
+    def __iter__(self):
+        """ overwrites __iter__ to enable Note object """
+        s = []
+        for l in self.get_octaves():
+            s.extend(l)
+        return s.__iter__()
 
 
 class Scale(ChromaticScale):
@@ -109,11 +86,11 @@ class Scale(ChromaticScale):
         """ Returns one octave of the starting with the root key in octave
         'start_octave' """
         scale = []
-        start_freq = self._calc_octave(start_octave)[self.temperament.name_to_distance(self._root)]
+        start_freq = self._calc_octave(start_octave)[self.temperament.name_to_distance(self._root)].frequency
         i = 0
         for k in scales_steps[self.temperament.length][self._scalename]:
             try:
-                scale.append(self.temperament.get_note(start_freq,i))
+                scale.append(self.temperament.get_note_frequency(start_freq,i))
                 i = i + k
             except KeyError:
                 pass
@@ -138,6 +115,12 @@ class Scale(ChromaticScale):
 
     def __str__(self):
         return ", ".join(( str(x) for x in self.get_scale()  ))
+
+    def __iter__(self):
+        s = []
+        for l in self.get_scale():
+            s.extend(l)
+        return s.__iter__()
 
 if __name__ == "__main__":
     pass

@@ -2,7 +2,7 @@
 
 import sys,os
 from pymusictheory.scales import Scale, scales_steps
-from pymusictheory.definitions import *
+from pymusictheory.temperament import *
 
 def main():
     print("Generating all scales as defined in " +

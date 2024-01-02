@@ -2,7 +2,7 @@ import unittest
 
 from fractions import Fraction
 from pymusictheory.scales import Scale
-
+from pymusictheory.notes import PitchClass
 
 class TestScale(unittest.TestCase):
 
@@ -21,6 +21,11 @@ class TestScale(unittest.TestCase):
                      ['f#', 'gb'], ['g#', 'ab'], ['a'], ['b']]
         s = Scale(root='c#', scale='minor')
         self.assertTrue(s.get_scale() == Csharpmin)
+
+    def test_operator(self):
+        s = Scale(root='c#', scale='minor')
+        self.assertTrue(PitchClass('c#') in s)
+        self.assertFalse(PitchClass('c') in s)
 
 
 if __name__ == '__main__':

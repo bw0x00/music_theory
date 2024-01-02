@@ -3,14 +3,12 @@
 from functools import singledispatchmethod
 import re
 
-from .definitions import *
-from .scales import ChromaticScale
-
+from .temperament import CoreChromaticScale
 
 class Note:
 
     @singledispatchmethod
-    def __init__(self, note, chromaticscale=ChromaticScale()):
+    def __init__(self, note, chromaticscale=CoreChromaticScale()):
         """ Creates a Note Object from another Note object, SPN, distance to C0 (int) or a frequency
         (float)."""
         if type(note) == type(self):
@@ -20,11 +18,11 @@ class Note:
                              " or a frequence")
 
     @__init__.register
-    def _1(self, note: int, chromaticscale=ChromaticScale()):
+    def _1(self, note: int, chromaticscale=CoreChromaticScale()):
         self._shared_init(distancetoc0=note, chromaticscale=chromaticscale)
 
     @__init__.register
-    def _2(self, note: float, chromaticscale=ChromaticScale()):
+    def _2(self, note: float, chromaticscale=CoreChromaticScale()):
         success = False
         octaves = chromaticscale.get_octaves()
         for octave in octaves:
@@ -38,7 +36,7 @@ class Note:
                              " chromatic scale")
 
     @__init__.register
-    def _3(self, note: str, chromaticscale=ChromaticScale()):
+    def _3(self, note: str, chromaticscale=CoreChromaticScale()):
         self._shared_init(chromaticscale.SPN_to_distance(note), chromaticscale)
 
     def _shared_init(self, distancetoc0, chromaticscale):
@@ -163,7 +161,7 @@ class Note:
 
 class PitchClass:
 
-    def __init__(self, note, chromaticscale=ChromaticScale()):
+    def __init__(self, note, chromaticscale=CoreChromaticScale()):
         """ Creates the PitchClass containing 'note'; 'note' can be any of SPN,
         distance to C0, PitchClass numeric (c=0,...) or frequency """
         try:
@@ -191,6 +189,9 @@ class PitchClass:
 
     def __getitem__(self,n):
         return self._pc[n] 
+
+    def __eq__(self,a):
+        return self._pc_name == a
 
 if __name__ == '__main__':
     pass

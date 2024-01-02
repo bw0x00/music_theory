@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-from .definitions import *
 from .scales import ChromaticScale
 from .notes import Note, PitchClass
 
