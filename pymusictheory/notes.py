@@ -17,6 +17,10 @@ class Note:
             raise ValueError("Note must be initilized with SPN, int distance to C0" +
                              " or a frequence")
 
+        if type(chromaticscale) is not CoreChromaticScale:
+            raise ValueError("chromaticscale must be of type CoreChromaticScale " +
+                             f"not {type(chromaticscale)}")
+
     @__init__.register
     def _1(self, note: int, chromaticscale=CoreChromaticScale()):
         self._shared_init(distancetoc0=note, chromaticscale=chromaticscale)
@@ -67,7 +71,7 @@ class Note:
             for note in octaves[octave]:
                 if note == a:
                     return True
-        return false
+        return False
 
     @__eq__.register
     def _3(self, a: str):

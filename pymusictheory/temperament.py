@@ -79,7 +79,9 @@ class CoreChromaticScale:
         and a temperament distance list. For non-12 steps scales, a list of
         tone with the correpsonding half-tone distance must be be provided in addition. Default: A4=440Hz and 12TET"""
 
-        if temperament.get_note_frequency(note[1],len(temperament)) != note[1]*2:
+        if type(note) is not list and type(note) is not tuple:
+            raise ValueError(f"Wrong anchor note type: {type(note)}")
+        if temperament.get_note_frequency(note[1],temperament.length) != note[1]*2:
             raise ValueError('len(temperament) != one octave')
 
         self._temperament = temperament

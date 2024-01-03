@@ -2,7 +2,7 @@ import unittest
 
 from fractions import Fraction
 from pymusictheory.notes import Note, PitchClass
-
+from pymusictheory.scales import ChromaticScale
 
 class TestNotes(unittest.TestCase):
 
@@ -11,6 +11,14 @@ class TestNotes(unittest.TestCase):
         a4_2 = Note(a4)
         a4_3 = Note(440.0)
         a4_4 = Note(12*4+3)
+        with self.assertRaises(ValueError):
+            Note(1,ChromaticScale())
+        with self.assertRaises(ValueError):
+            Note("A4",ChromaticScale())
+        with self.assertRaises(ValueError):
+            Note(440.0,ChromaticScale())
+        with self.assertRaises(ValueError):
+            Note(a4,ChromaticScale())
 
     def test_compare(self):
         a4 = Note('A4')

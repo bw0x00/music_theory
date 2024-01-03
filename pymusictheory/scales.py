@@ -23,12 +23,12 @@ scales_steps = {
 class ChromaticScale(CoreChromaticScale):
     _number_octaves = 9
 
-    def __init__(self, note=('a4', 440), temperament=temperament['12TET']):
+    def __init__(self, anchor=('a4', 440), temperament=temperament['12TET']):
         """ Creates Chromatic Scale from given note (Scientific Pitch Notation)
         and a temperament distance list. For non-12 steps scales, a list of
         tone with the correpsonding half-tone distance must be be provided in addition. Default: A4=440Hz and 12TET"""
 
-        super().__init__(note, temperament)
+        super().__init__(anchor, temperament)
 
     def get_octaves(self):
         """ returns a full octave from An to An+1 (including). i.e., the list
@@ -43,8 +43,10 @@ class ChromaticScale(CoreChromaticScale):
         list of Note objects"""
         ret = list()
         for i in range(len(self._temperament)+1):
+            anchor = (self.SPN_from_distance(self._anchor_distance),self._anchor)
             ret.append(notes.Note(i+self.temperament.length*octave_number,
-                            chromaticscale=self))
+                chromaticscale=CoreChromaticScale(anchor,
+                                                    temperament=self.temperament )))
         return ret
 
     def __iter__(self):
