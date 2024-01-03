@@ -64,14 +64,14 @@ class Note:
             return self == float(a)
 
     @__eq__.register
-    def _2(self, a: float):
-        # TODO: improve performance and move into chromatic scale
-        octaves = self._chromaticscale.get_octaves()
-        for octave in octaves:
-            for note in octaves[octave]:
-                if note == a:
-                    return True
-        return False
+    def _2(self, a: float): 
+        return self.frequency == a
+#        octaves = self._chromaticscale.get_octaves()
+#        for octave in octaves:
+#            for note in octaves[octave]:
+#                if note == a:
+#                    return True
+#        return False
 
     @__eq__.register
     def _3(self, a: str):
