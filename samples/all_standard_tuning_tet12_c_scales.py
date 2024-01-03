@@ -5,8 +5,8 @@ from pymusictheory.scales import Scale, scales_steps
 from pymusictheory.temperament import *
 
 def main():
-    print("Generating all scales as defined in " +
-          "pymusictheory.definitions.scales_steps for standard tuning with " +
+    print("\nGenerating all scales as defined in " +
+          "pymusictheory.scales for standard tuning with " +
           "12TET")
     print("Writing output into folder: " + sys.argv[1])
 

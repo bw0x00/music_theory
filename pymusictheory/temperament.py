@@ -53,6 +53,7 @@ class TwelveTET():
         return self._reverse_semitone_distance[distance]
 
     def name_to_distance(self,name):
+        name=name.lower()
         if name in self._semitone_distance:
             return self._semitone_distance[name]
         else:
@@ -71,11 +72,12 @@ def init_temperament():
 init_temperament()
 
 
-class CoreChromaticScale:
+class _CoreChromaticScale:
     _number_octaves = 9
 
     def __init__(self, note=('a4', 440), temperament=temperament['12TET']):
-        """ Creates Chromatic Scale from given note (Scientific Pitch Notation)
+        """ Warning: Internal Class only. Please use ChromaticScale instead.
+        Creates Chromatic Scale from given note (Scientific Pitch Notation)
         and a temperament distance list. For non-12 steps scales, a list of
         tone with the correpsonding half-tone distance must be be provided in addition. Default: A4=440Hz and 12TET"""
 
@@ -108,6 +110,10 @@ class CoreChromaticScale:
     @property
     def temperament(self):
         return self._temperament
+
+    @property
+    def anchor(self):
+        return (self.SPN_from_distance(self._anchor_distance) , self._anchor )
 
     def SPN_to_distance(self,note):
         """ Calculates semitone distance of note in SPN to C0 """

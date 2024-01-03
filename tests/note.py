@@ -11,14 +11,7 @@ class TestNotes(unittest.TestCase):
         a4_2 = Note(a4)
         a4_3 = Note(440.0)
         a4_4 = Note(12*4+3)
-        with self.assertRaises(ValueError):
-            Note(1,ChromaticScale())
-        with self.assertRaises(ValueError):
-            Note("A4",ChromaticScale())
-        with self.assertRaises(ValueError):
-            Note(440.0,ChromaticScale())
-        with self.assertRaises(ValueError):
-            Note(a4,ChromaticScale())
+        a4 = Note('a4', ChromaticScale(('a4',44)))
 
     def test_compare(self):
         a4 = Note('A4')

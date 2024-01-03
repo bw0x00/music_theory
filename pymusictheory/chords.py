@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 
+from functools import singledispatchmethod
+
 from .scales import ChromaticScale
-from .notes import Note, PitchClass
+#from .notes import Note, PitchClass
+from . import notes
 
 # chord name to integeter notation mapping (semitone distance from root)
 chord_integer = {
@@ -31,7 +34,7 @@ class Chord:
 
         chord = []
         for e in range(len(self._chord)):
-            n = Note(self._chord[e]) * (voicing[e] + 1)
+            n = notes.Note(self._chord[e]) * (voicing[e] + 1)
             chord.append(n)
         return chord
 
@@ -50,6 +53,19 @@ class Chord:
     def __str__(self):
         """ asdas """
         return ", ".join(( self._scale.temperament.distance_to_name(x) for x in self._chord ))
+
+    @singledispatchmethod
+    def __add__(self,a):
+        raise ValueException(f"Unsupported type '{type(a)}'")
+
+    #TODO: __add__ for chord
+    @__add__.register
+    def _1(self, a: notes.Note):
+        pass
+
+    @__add__.register
+    def _2(self, a: notes.PitchClass):
+        pass
 
 if __name__ == '__main__':
     pass

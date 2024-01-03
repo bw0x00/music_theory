@@ -2,6 +2,7 @@
 
 import re
 
+from .temperament import _CoreChromaticScale
 from .temperament import *
 from . import notes
 
@@ -20,7 +21,7 @@ scales_steps = {
 
 
 # Indirection required to allow scales to work with Note objects
-class ChromaticScale(CoreChromaticScale):
+class ChromaticScale(_CoreChromaticScale):
     _number_octaves = 9
 
     def __init__(self, anchor=('a4', 440), temperament=temperament['12TET']):
@@ -45,7 +46,7 @@ class ChromaticScale(CoreChromaticScale):
         for i in range(len(self._temperament)+1):
             anchor = (self.SPN_from_distance(self._anchor_distance),self._anchor)
             ret.append(notes.Note(i+self.temperament.length*octave_number,
-                chromaticscale=CoreChromaticScale(anchor,
+                chromaticscale=_CoreChromaticScale(anchor,
                                                     temperament=self.temperament )))
         return ret
 
