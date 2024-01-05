@@ -1,7 +1,7 @@
 import unittest
 
-from pymusictheory.scales import ChromaticScale
 from fractions import Fraction
+from pymusictheory.core.scales import ChromaticScale
 
 
 class TestChromaticScale(unittest.TestCase):

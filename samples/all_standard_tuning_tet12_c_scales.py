@@ -1,8 +1,8 @@
 #!/bin/env python3
 
 import sys,os
-from pymusictheory.scales import Scale, scales_steps
-from pymusictheory.temperament import *
+from pymusictheory.core.scales import Scale, scales_steps
+from pymusictheory.core.temperament import *
 
 def main():
     print("\nGenerating all scales as defined in " +

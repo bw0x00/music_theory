@@ -1,9 +1,9 @@
 #!/bin/env python3
 
 import sys,os
-from pymusictheory.chords import Chord, chord_integer
-from pymusictheory.scales import ChromaticScale
-from pymusictheory.temperament import *
+from pymusictheory.core.chords import Chord, chord_integer
+from pymusictheory.core.scales import ChromaticScale
+from pymusictheory.core.temperament import *
 
 def main():
     print("\nGenerating all scales as defined in " +

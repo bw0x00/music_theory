@@ -1,2 +1,2 @@
 
-__all__ = ["scales", "chords"]
+__all__ = ["core"]

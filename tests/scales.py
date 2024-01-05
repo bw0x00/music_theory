@@ -1,8 +1,8 @@
 import unittest
 
 from fractions import Fraction
-from pymusictheory.scales import Scale
-from pymusictheory.notes import PitchClass
+from pymusictheory.core.scales import Scale
+from pymusictheory.core.notes import PitchClass
 
 class TestScale(unittest.TestCase):
 

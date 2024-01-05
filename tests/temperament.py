@@ -1,6 +1,6 @@
 import unittest
 
-from pymusictheory.temperament import *
+from pymusictheory.core.temperament import *
 
 
 class TestChords(unittest.TestCase):
