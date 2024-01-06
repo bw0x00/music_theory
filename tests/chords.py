@@ -16,14 +16,26 @@ class TestChords(unittest.TestCase):
         self.assertFalse(C5 == s.get_chord())
 
         Cmaj2 = ['c3', 'e3', 'g4']
-        self.assertTrue(s.get_chord((3,3,4)) == Cmaj2)
+        s.voicing = (3,3,4)
+        self.assertTrue(s.get_chord() == Cmaj2)
 
     def test_chord_composition(self):
         Cmaj = ['c4', 'e4', 'g4' ]
         s = Chord(root='c', chord='powerchord')
         s2 = s + PitchClass('e')
+        with self.assertRaises(ValueError):
+            s3 = s + Note('e4')
+        s.voicing = (4, 4)
+        s3 = s + Note('e4')
         self.assertTrue(s2.get_chord() == Cmaj)
+        self.assertTrue(s3.get_chord() == Cmaj)
 
+        i = Interval(4)
+        i2 = Interval(7)
+        s4 = s + i
+        self.assertTrue(s4.get_chord() == Cmaj)
+        s5 = s + i2
+        self.assertTrue(s5 == s)
 
     def test_chord_frequencies(self):
         Cmaj = [261.63, 329.63, 392.0]
@@ -38,6 +50,20 @@ class TestChords(unittest.TestCase):
         pc = PitchClass('e')
         i = Interval(7)
         n = Note('g4')
+        Cmaj = [261.63, 329.63, 392.0]
+        s = Chord(root='c', chord='major')
+
+        self.assertTrue(pc in s)
+        self.assertTrue(i in s)
+
+        with self.assertRaises(ValueError):
+            self.assertTrue(Cmaj[0] in s)
+        with self.assertRaises(ValueError):
+            self.assertTrue(n in s)
+
+        s.voicing = [4,4,4]
+        self.assertTrue(Cmaj[0] in s)
+        self.assertTrue(n in s)
 
 
 if __name__ == '__main__':

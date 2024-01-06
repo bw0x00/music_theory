@@ -65,7 +65,7 @@ class Note:
         if type(a) == type(self):
             return a.name == self.name
         else:
-            raise TypeError("unsupported operand types(s) for __eq__")
+            return NotImplemented 
 
     @__eq__.register
     def _1(self, a: int):
@@ -87,7 +87,7 @@ class Note:
         if type(a) == type(self):
             return a.distance < self.distance
         else:
-            raise TypeError("unsupported operand types(s) for __eq__")
+            return NotImplemented 
 
     @__gt__.register
     def _1(self, a: int):
@@ -106,7 +106,7 @@ class Note:
         if type(a) == type(self):
             return a.distance > self.distance
         else:
-            raise TypeError("unsupported operand types(s) for __eq__")
+            return NotImplemented
 
     @__lt__.register
     def _1(self, a: int):
@@ -122,11 +122,16 @@ class Note:
 
     @singledispatchmethod
     def __sub__(self, a):
-        raise ValueError(f'__sub__ for type {type(a)} on Note not defined')
+        return NotImplemented
 
     #!!! __sub__ for type(note) will be registered from .intervals !!!
 
+    @singledispatchmethod
     def __add__(self, a):
+        return NotImplemented
+
+    @__add__.register
+    def _1(self, a: int):
         return Note(self.distance+a, self._chromaticscale)
 
     def __mul__(self, a):

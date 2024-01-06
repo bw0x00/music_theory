@@ -58,28 +58,33 @@ class Interval:
 
     @singledispatchmethod
     def __eq__(self, a):
-        raise ValueError(f'Interval.__eq__ not defined for {type(a)}')
+        return NotImplemented
 
     @__eq__.register
     def _1(self,a: list):
         if len(a) == 2:
             for n in a:
                 if type(n) is not notes.Note:
-                    raise ValueError('Interval can only be compared to a '
-                                     + '1) a or tuple of two notes'
-                                     + '2) a chord composed of two notes')
+                    return NotImplemented
             d = a[0] - a[1]
             if d.distance == self._distance:
                 return True
 
         else:
-            raise ValueError('Interval can only be compared to lists, tuple'
-                             + ' or chords composed of two notes')
+            return NotImplemented
         return False
 
     @__eq__.register
     def _2(self, a: tuple):
         return self == list(a)
+
+    @singledispatchmethod
+    def __radd__(self, a):
+        pass
+
+    @__radd__.register
+    def __radd__(self, a: notes.Note):
+        return a + self._distance
 
     @property
     def distance(self):
@@ -93,8 +98,6 @@ class Interval:
     def short_names(self):
         return self._reverse_interval_distance[self._distance][1:3]
 
-    # TODO: radd for chord + interval = chord
-    # TODO: radd for note + interval = note
 
 
 # add note - note = interval to note class

@@ -20,12 +20,17 @@ chord_integer = {
 
 class Chord:
 
-    def __init__(self, root: str, chord, chromaticscale=ChromaticScale()):
+    def __init__(self, root: str, chord, voicing=None,
+                 chromaticscale=ChromaticScale()):
         """ Creates a Chord object for 'root' and 'chord' (integer list).
         'root' must be name of PitchClass (str) """
         self._scale = chromaticscale
         self._root_index = self._scale.temperament.name_to_distance(root)
         self._root_name = root
+        if voicing:
+            self._voicing = tuple(voicing)
+        else:
+            self._voicing = None
 
         if type(chord) is str: # test if chord definition is in chord_inter
             self._chord = chord_integer[self._scale.temperament.length][chord]
@@ -36,32 +41,32 @@ class Chord:
                     raise ValueError("Chord definition must be from predefined"
                     + "chords or a list of integers "
                     +" (e.g., a major chord would be [0, 4, 7]")
-            self._chord = sorted(chord)
+            self._chord = tuple(sorted(chord))
+        if self._voicing and len(self._chord) != len(self._voicing):
+            raise ValueError("len(voicing) != len(chord)")
 
     def get_chord(self, voicing: list = None) -> list:
         """ Returns the list with the notes of the chord. Optional: provide
         voicing as list of octaves per note in chord """
         chord = []
-        if voicing is None:
+        if self._voicing is None:
             root = self._chord[0]+4*self._scale.temperament.length
             for e in self._chord:
                 n = notes.Note(root + e, self._scale)
                 chord.append(n)
         else:
-            if len(voicing) != len(self._chord):
-               raise ValueError("len(voicing) != len(chord)")
-            else:
-               for e in range(len(self._chord)):
-                    n = self._chord[e] + 12 * voicing[e]
-                    chord.append( notes.Note(n, self._scale)  )
+            for e in range(len(self._chord)):
+                n = self._chord[e] \
+                    + self._scale.temperament.length * self._voicing[e]
+                chord.append( notes.Note(n, self._scale)  )
         return chord
 
-    def get_frequencies(self, voicing: list = None) -> list:
+    def get_frequencies(self) -> list:
         """ Returns the list of the frequencies of the chord. List can contain
         frequencies of multiple octaves. Optional: An list of octave numbers
         can be provided. List must be of equal length to the chord and
         transposes the corresponding chord note into the given octave. """
-        chord = self.get_chord(voicing)
+        chord = self.get_chord()
 
         freqs = []
         for e in chord:
@@ -74,20 +79,49 @@ class Chord:
 
     @singledispatchmethod
     def __add__(self, a):
-        raise ValueException(f"Unsupported type '{type(a)}'")
+        return NotImplemented
 
-    # TODO: add for chord + note = chord
     @__add__.register
     def _1(self, a: notes.Note):
-        pass
+        if not self._voicing:
+            raise ValueError("Cannot add Note to Chord without set voicing")
+        d = a.distance % self._scale.temperament.length
+        o = round(a.distance / self._scale.temperament.length)
+        c = [x for x in self._chord]
+        if d not in c:
+            c.append(d)
+            v = [x for x in self._voicing]
+            v.append(o)
+        return Chord(root=self._root_name, chord=c, voicing=v,
+                     chromaticscale=self._scale)
 
     @__add__.register
     def _2(self, a: notes.PitchClass):
         new_chord_int = []
         new_chord_int.extend(self._chord)
-        new_chord_int.append(a.numeric)
-        ret = Chord(self._root_name, new_chord_int, self._scale)
+        if a.numeric not in new_chord_int:
+            new_chord_int.append(a.numeric)
+            if self._voicing:
+                v = [x for x in self._voicing]
+                v.append(v[0])
+            else:
+                v = None
+        ret = Chord(self._root_name, new_chord_int, v,self._scale)
         return ret
+
+    @__add__.register
+    def _3(self, a: intervals.Interval):
+        new_chord_int = [x for x in self._chord]
+        v = list(self._voicing[:])
+        if a.distance not in new_chord_int:
+            new_chord_int.append(a.distance)
+            if v:
+                if self._root_index + a.distance \
+                    < self._scale.temperament.length:
+                    v.append(v[0])
+                else:
+                    v.append(v[0] + 1)
+        return Chord(self._root_name, new_chord_int, v ,self._scale)
 
     @singledispatchmethod
     def __eq__(self,a):
@@ -106,24 +140,41 @@ class Chord:
 
     @__contains__.register
     def _1(self,a: notes.Note):
-        pass
+        if self._voicing is None:
+            raise ValueError("Cannot compare note to Chord without set voicing")
+        return a.name in self.get_chord()
 
     @__contains__.register
     def _2(self,a: notes.PitchClass):
-        pass
+        return a.numeric in self._chord
 
     @__contains__.register
     def _3(self,a: intervals.Interval):
-        pass
+        for i in range(len(self._chord)):
+            if self._chord[i] - self._chord[0]:
+                return True
+        return False
 
     @__contains__.register
     def _4(self,a: float):
-        pass
+        if not self._voicing:
+            raise ValueError("Cannot compare frequency to Chord without set voicing")
+        return a in self.get_frequencies()
 
     @__contains__.register
     def _5(self,a: int):
-        return self.__contains__(float(a)) 
+        return self.__contains__(float(a))
 
+    @property
+    def voicing(self):
+        return self._voicing[:]
+
+    @voicing.setter
+    def voicing(self, voicing):
+        if len(voicing) == len(self._chord):
+            self._voicing = tuple(voicing)
+        else:
+            raise ValueError("len(voicing) not equal len(chord)")
 
 if __name__ == '__main__':
     pass
