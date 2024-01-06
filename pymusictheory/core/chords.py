@@ -72,7 +72,7 @@ class Chord:
     def __add__(self, a):
         raise ValueException(f"Unsupported type '{type(a)}'")
 
-    # TODO: __add__ for chord
+    # TODO: add for chord + note = chord
     @__add__.register
     def _1(self, a: notes.Note):
         pass
