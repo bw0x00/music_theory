@@ -4,7 +4,6 @@ from functools import singledispatchmethod
 
 from .scales import ChromaticScale
 from . import notes
-from . import chords
 
 _reverse_interval_distance = {
         12: {
@@ -82,10 +81,6 @@ class Interval:
     def _2(self, a: tuple):
         return self == list(a)
 
-    @__eq__.register
-    def _3(self, a: chords.Chord):
-        return self == a.get_chord()[::-1]
-
     @property
     def distance(self):
         return self._distance
@@ -99,6 +94,7 @@ class Interval:
         return self._reverse_interval_distance[self._distance][1:3]
 
     # TODO: radd for chord + interval = chord
+    # TODO: radd for note + interval = note
 
 
 # add note - note = interval to note class
