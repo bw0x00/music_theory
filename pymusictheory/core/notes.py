@@ -120,6 +120,12 @@ class Note:
     def _3(self, a: str):
         return self._chromaticscale.SPN_to_distance(a) > self.distance
 
+    @singledispatchmethod
+    def __sub__(self, a):
+        raise ValueError(f'__sub__ for type {type(a)} on Note not defined')
+
+    #!!! __sub__ for type(note) will be registered from .intervals !!!
+
     def __add__(self, a):
         return Note(self.distance+a, self._chromaticscale)
 

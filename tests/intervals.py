@@ -11,15 +11,26 @@ class TestIntervals(unittest.TestCase):
         c = Chord('c','powerchord')
         i = Interval('perfect_fifth')
         self.assertTrue(c == i)
+        with self.assertRaises(ValueError):
+            c2 = Chord('c', 'major')
+            i2 = Interval('perfect_fifth')
+            c2 == i2
 
     def test_interval_note(self):
         i = Interval(7)
         n1 = Note('c4')
         n2 = Note('g4')
-        self.assertTrue([n1,n2] == i)
-        self.assertTrue((n1,n2) == i)
+        self.assertTrue([n2,n1] == i)
+        self.assertTrue((n2,n1) == i)
         with self.assertRaises(ValueError):
             (n1,n2,n1) == i
+        with self.assertRaises(ValueError):
+            self.assertTrue((n1,n2) == i)
+        with self.assertRaises(ValueError):
+            n1 - n2
+
+        j = n2 - n1
+        self.assertTrue(j.distance == 7)
 
     def test_interval_init(self):
         i = Interval(7)

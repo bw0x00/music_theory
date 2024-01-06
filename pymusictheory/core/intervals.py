@@ -40,8 +40,11 @@ class Interval:
                 self._interval_distance[n] = k
 
         if type(interval) is int:
-           self._distance = interval
-           self._name = self._reverse_interval_distance[interval][0]
+            self._distance = interval
+            if interval < 0:
+                raise ValueError('Interval cannot be created from negative'
+                                 + ' distance')
+            self._name = self._reverse_interval_distance[interval][0]
         elif type(interval) is str:
            self._distance = self._interval_distance[interval]
            # ensure that name is always full name (e.g., major_fifth) 
@@ -66,8 +69,10 @@ class Interval:
                     raise ValueError('Interval can only be compared to a '
                                      + '1) a or tuple of two notes'
                                      + '2) a chord composed of two notes')
-            if abs(a[0].distance - a[1].distance) == self._distance:
+            d = a[0] - a[1]
+            if d.distance == self._distance:
                 return True
+
         else:
             raise ValueError('Interval can only be compared to lists, tuple'
                              + ' or chords composed of two notes')
@@ -79,7 +84,7 @@ class Interval:
 
     @__eq__.register
     def _3(self, a: chords.Chord):
-        return self == a.get_chord()
+        return self == a.get_chord()[::-1]
 
     @property
     def distance(self):
@@ -94,6 +99,13 @@ class Interval:
         return self._reverse_interval_distance[self._distance][1:3]
 
     # TODO: radd for chord + interval = chord
+
+
+# add note - note = interval to note class
+@notes.Note.__sub__.register
+def _n1(note1, note2: notes.Note):
+    return Interval(note1.distance - note2.distance)
+
 
 if __name__ == '__main__':
     pass
