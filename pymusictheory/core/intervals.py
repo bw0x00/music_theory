@@ -80,7 +80,7 @@ class Interval:
 
     @singledispatchmethod
     def __radd__(self, a):
-        pass
+        return NotImplemented 
 
     @__radd__.register
     def __radd__(self, a: notes.Note):

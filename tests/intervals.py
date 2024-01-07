@@ -4,6 +4,7 @@ from fractions import Fraction
 from pymusictheory.core.intervals import Interval
 from pymusictheory.core.notes import Note, PitchClass
 from pymusictheory.core.chords import Chord
+from pymusictheory.core.scales import Scale
 
 class TestIntervals(unittest.TestCase):
 
@@ -13,6 +14,15 @@ class TestIntervals(unittest.TestCase):
         c2 = Chord('c', 'major')
         i2 = Interval('perfect_fifth')
         self.assertFalse(c2 == i2)
+
+    def test_interval_scale(self):
+        i = Interval('perfect_fifth')
+        i2 = Interval('minor_second')
+
+        s = Scale('c','major')
+
+        self.assertFalse(i2 in s)
+        self.assertTrue(i in s)
 
     def test_interval_note(self):
         i = Interval(7)

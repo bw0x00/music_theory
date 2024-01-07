@@ -45,7 +45,7 @@ class Chord:
         if self._voicing and len(self._chord) != len(self._voicing):
             raise ValueError("len(voicing) != len(chord)")
 
-    def get_chord(self, voicing: list = None) -> list:
+    def get_chord(self) -> list:
         """ Returns the list with the notes of the chord. Optional: provide
         voicing as list of octaves per note in chord """
         chord = []
@@ -86,7 +86,7 @@ class Chord:
         if not self._voicing:
             raise ValueError("Cannot add Note to Chord without set voicing")
         d = a.distance % self._scale.temperament.length
-        o = round(a.distance / self._scale.temperament.length)
+        o = int(a.distance / self._scale.temperament.length)
         c = [x for x in self._chord]
         if d not in c:
             c.append(d)
@@ -174,7 +174,10 @@ class Chord:
 
     @property
     def voicing(self):
-        return self._voicing[:]
+        if self._voicing:
+            return self._voicing[:]
+        else:
+            return None
 
     @voicing.setter
     def voicing(self, voicing):

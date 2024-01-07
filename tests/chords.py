@@ -17,6 +17,7 @@ class TestChords(unittest.TestCase):
         self.assertFalse(C5 == s.get_chord())
 
         Cmaj2 = ['c3', 'e3', 'g4']
+        self.assertFalse(s.get_chord() == Cmaj2)
         s.voicing = (3,3,4)
         self.assertTrue(s.get_chord() == Cmaj2)
 
@@ -68,12 +69,12 @@ class TestChords(unittest.TestCase):
 
     def test_chord_scale(self):
         scale = Scale('c')
-        c1 = Chord('c','major')
+        c4 = Chord('c','major')
 
-        self.assertTrue(c1 in scale)
-
-        c1.voicing = [4,4,4]
-        self.assertTrue(c1 in scale)
+        self.assertTrue(c4 in scale)
+        # vocing doesn't matter
+        c4.voicing = (4,4,4)
+        self.assertTrue(c4 in scale)
 
 if __name__ == '__main__':
     unittest.main()

@@ -87,10 +87,10 @@ class Scale(ChromaticScale):
         """ Returns the notes of the scale as an list containing the pitchclass
         names
         """
-        # TODO: return list of pitchclasses
         scale = []
         for k in self._indices:
-            scale.append(self.temperament.distance_to_name(k))
+            scale.append(notes.PitchClass(k))
+            #self.temperament.distance_to_name(k))
         return scale
 
     def get_scale_frequencies(self, start_octave=4) -> list:
@@ -147,19 +147,15 @@ class Scale(ChromaticScale):
 
     @__contains__.register
     def _2(self, a:intervals.Interval):
-        # TODO: implement Scale.__contains__(Interval)
-        pass
+        return notes.Note(self.temperament.name_to_distance(self._root) + a ) in self
 
     @__contains__.register
     def _3(self, a: notes.Note):
-        #TODO: optimize speed -> get octave to compare from Note
         structured_scale = self.get_octaves()
-        ret = False
-        for octave in structured_scale:
-            for note in structured_scale[octave]:
-                if a == note:
-                    ret = True
-        return ret
+        octave = int(self.SPN_to_distance(a.name) \
+                        / self.temperament.length)
+
+        return str(a) in  structured_scale[octave]
 
     # !!! __contains__ for Chord added by .chords !!!!
 

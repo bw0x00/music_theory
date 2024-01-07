@@ -10,8 +10,12 @@ class TestNotes(unittest.TestCase):
         a4 = Note('A4')
         a4_2 = Note(a4)
         a4_3 = Note(440.0)
-        a4_4 = Note(12*4+3)
+        a4_4 = Note(12*4+9)
         a4 = Note('a4', ChromaticScale(('a4',44)))
+        self.assertTrue('a4' == a4)
+        self.assertTrue('a4' == a4_2)
+        self.assertTrue('a4' == a4_3)
+        self.assertTrue('a4' == a4_4)
 
     def test_compare(self):
         a4 = Note('A4')

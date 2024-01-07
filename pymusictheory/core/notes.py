@@ -40,7 +40,10 @@ class Note:
             for n in octaves[octave]:
                 if n == note:
                     success = True
-                    self._shared_init(len(octaves)-1*octave+n, chromaticscale)
+                    distancec0 = octaves[octave].index(n) \
+                                    + chromaticscale.temperament.length \
+                                    * (octave)
+                    self._shared_init(distancec0, chromaticscale)
 
         if not success:
             raise ValueError("Frequency does not match any note in used"
@@ -139,7 +142,7 @@ class Note:
         is implemented as the addition of (a-1)*octave_length semitone steps.
         """
         if a >= 1:
-            return Note(round(self.distance+(a-1)*self._chromaticscale.temperament.length),
+            return Note(int(self.distance+(a-1)*self._chromaticscale.temperament.length),
                                 self._chromaticscale)
         elif 0 < a < 1:
             return self/(1/a)
@@ -155,7 +158,7 @@ class Note:
         """ Note can be divided by numbers > 0. Devision of a note is
         implemented as the substraction of (a-1)*octave_length semitone steps. """
         if a >= 1:
-            return Note(round(self.distance-(a-1)*self._chromaticscale.temperament.length),
+            return Note(int(self.distance-(a-1)*self._chromaticscale.temperament.length),
                                 self._chromaticscale)
         elif 1 > a > 0:
             return self * (1/a)
@@ -211,8 +214,34 @@ class PitchClass:
     def __getitem__(self, n):
         return self._pc[n]
 
+    @singledispatchmethod
     def __eq__(self, a):
-        return self._pc_name == a
+        return NotImplemented
+
+    @__eq__.register
+    def _1(self, a: str):
+        return self._chromaticscale.temperament.name_to_distance(a)  == self._pc_numeric
+
+    @__eq__.register
+    def _2(self, a: list):
+        for n in a:
+            if self == n:
+                return True
+        return False
+
+    @singledispatchmethod
+    def __contains__(self,a):
+        return NotImplemented
+
+    @__contains__.register
+    def _1(self, a: Note):
+        return a.name in self._pc
+
+    @__contains__.register(int)
+    @__contains__.register(str)
+    @__contains__.register(float)
+    def _2(self, a):
+        return Note(a, self._chromaticscale) in self
 
     @property
     def name(self):
