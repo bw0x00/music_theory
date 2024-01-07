@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 
 import re
+from functools import singledispatchmethod
 
 from .temperament import _CoreChromaticScale
 from .temperament import *
 from . import notes
+from . import intervals
 
 # scale name to semitone distance from root
 scales_steps = {
@@ -82,8 +84,10 @@ class Scale(ChromaticScale):
         self._indices = self._calc_filter()
 
     def get_scale(self) -> list:
-        """ Returns the notes of the scale as an list
+        """ Returns the notes of the scale as an list containing the pitchclass
+        names
         """
+        # TODO: return list of pitchclasses
         scale = []
         for k in self._indices:
             scale.append(self.temperament.distance_to_name(k))
@@ -118,10 +122,10 @@ class Scale(ChromaticScale):
         """ Returns the frequencies of the scale in all octaves in the used chromatic scale
         """
         octaves = dict()
-        for octave in self._octaves:
+        for octave in super().get_octaves():
             octaves[octave] = []
             for k in sorted(self._indices):
-                octaves[octave].append(self._octaves[octave][k])
+                octaves[octave].append(super().get_octaves()[octave][k])
         return octaves
 
     def __str__(self):
@@ -133,6 +137,31 @@ class Scale(ChromaticScale):
             s.extend(l)
         return s.__iter__()
 
+    @singledispatchmethod
+    def __contains__(self,a):
+        return NotImplemented
+
+    @__contains__.register
+    def _1(self, a: notes.PitchClass):
+        return a.numeric in self._indices
+
+    @__contains__.register
+    def _2(self, a:intervals.Interval):
+        # TODO: implement Scale.__contains__(Interval)
+        pass
+
+    @__contains__.register
+    def _3(self, a: notes.Note):
+        #TODO: optimize speed -> get octave to compare from Note
+        structured_scale = self.get_octaves()
+        ret = False
+        for octave in structured_scale:
+            for note in structured_scale[octave]:
+                if a == note:
+                    ret = True
+        return ret
+
+    # !!! __contains__ for Chord added by .chords !!!!
 
 if __name__ == "__main__":
     pass

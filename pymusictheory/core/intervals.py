@@ -2,7 +2,7 @@
 
 from functools import singledispatchmethod
 
-from .scales import ChromaticScale
+from .temperament import _CoreChromaticScale
 from . import notes
 
 _reverse_interval_distance = {
@@ -26,7 +26,7 @@ _reverse_interval_distance = {
 
 class Interval:
 
-    def __init__(self, interval, chromaticscale=ChromaticScale()):
+    def __init__(self, interval, chromaticscale=_CoreChromaticScale()):
         """ Creates an Interval object based on a distance or the Interval
         name. Optional: Provide an alternative chromaticscale if 12TET is not
         used.

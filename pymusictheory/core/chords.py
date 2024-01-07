@@ -2,7 +2,7 @@
 
 from functools import singledispatchmethod
 
-from .scales import ChromaticScale
+from .scales import ChromaticScale, Scale
 from . import notes
 from . import intervals
 
@@ -140,6 +140,13 @@ class Chord:
 
     @__contains__.register
     def _1(self,a: notes.Note):
+        """ Checks if a note, pitchclass or interval is in the chord:
+        - Note is checked based on defined voicing of chord and exact note value
+        - pitchclass is checked based on it's numeric independ from chord
+          voicing
+        - interval is checked based on the distance of all notes in the chord
+          to the root note
+        """
         if self._voicing is None:
             raise ValueError("Cannot compare note to Chord without set voicing")
         return a.name in self.get_chord()
@@ -175,6 +182,13 @@ class Chord:
             self._voicing = tuple(voicing)
         else:
             raise ValueError("len(voicing) not equal len(chord)")
+
+@Scale.__contains__.register
+def _s1(scale, a: Chord):
+    for chord_note in a.get_chord():
+        if chord_note not in scale:
+            return False
+    return True
 
 if __name__ == '__main__':
     pass

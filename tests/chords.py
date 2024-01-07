@@ -3,6 +3,7 @@ import unittest
 from pymusictheory.core.chords import Chord
 from pymusictheory.core.notes import Note, PitchClass
 from pymusictheory.core.intervals import Interval
+from pymusictheory.core.scales import Scale
 
 class TestChords(unittest.TestCase):
 
@@ -65,6 +66,14 @@ class TestChords(unittest.TestCase):
         self.assertTrue(Cmaj[0] in s)
         self.assertTrue(n in s)
 
+    def test_chord_scale(self):
+        scale = Scale('c')
+        c1 = Chord('c','major')
+
+        self.assertTrue(c1 in scale)
+
+        c1.voicing = [4,4,4]
+        self.assertTrue(c1 in scale)
 
 if __name__ == '__main__':
     unittest.main()
