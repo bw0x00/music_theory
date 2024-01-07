@@ -109,7 +109,7 @@ class _CoreChromaticScale:
         for i in range(len(self._temperament)+1):
             ret.append(
                 self._temperament.get_note_frequency(self._anchor,
-                                                     12*octave_number-self._anchor_distance + i))
+                                                     self.temperament.length*octave_number-self._anchor_distance + i))
         return ret
 
     @property

@@ -11,13 +11,20 @@ from . import intervals
 # scale name to semitone distance from root
 scales_steps = {
     12: {
-        'major': (2, 2, 1, 2, 2, 2, 1),
-        'harmonic_major': (2, 2, 1, 2, 1, 3, 1),
-        'melodic_major': (2, 2, 1, 2, 1, 2, 2),
-        'minor': (2, 1, 2, 2, 1, 2, 2),
-        'harmonic_minor': (2, 1, 2, 2, 1, 3, 1),
-        'ascending_melodic_minor': (2, 1, 2, 2, 2, 2, 1),
-        'descending_melodic_minor': (2, 2, 1, 2, 2, 1, 2)
+        'major'                     : (2, 2, 1, 2, 2, 2, 1),
+        'major_pentatonic'          : (2, 2, 3,    2, 3   ),
+        'japanese_pentatonic'       : (2, 3   , 2, 2, 3   ),
+        'harmonic_major'            : (2, 2, 1, 2, 1, 3, 1),
+        'melodic_major'             : (2, 2, 1, 2, 1, 2, 2),
+        'minor'                     : (2, 1, 2, 2, 1, 2, 2),
+        'minor_pentatonic'          : (3,    2, 2, 3   , 2),
+        'harmonic_minor'            : (2, 1, 2, 2, 1, 3, 1),
+        'ascending_melodic_minor'   : (2, 1, 2, 2, 2, 2, 1),
+        'descending_melodic_minor'  : (2, 2, 1, 2, 2, 1, 2),
+        'major_blues'               : (2, 1, 1, 3, 2, 3),
+        'minor_blues_b5'            : (3, 2, 1, 1, 3, 2),
+        'minor_blues_M3'            : (3, 1, 2, 1, 3, 2),
+        'minor_blues_M7'            : (3, 2, 2, 3, 1, 1)
     }
 }
 
@@ -97,6 +104,7 @@ class Scale(ChromaticScale):
         """ Returns one octave of the starting with the root key in octave
         'start_octave'
         """
+        # TODO: calculate based on distance to anchor to prevent rounding errors 
         scale = []
         start_freq = self._calc_octave(start_octave)[
             self.temperament.name_to_distance(self._root)].frequency

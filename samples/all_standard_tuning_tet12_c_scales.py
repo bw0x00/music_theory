@@ -27,7 +27,7 @@ def main():
                 notes = s.get_scale()
                 freqs = s.get_scale_frequencies(octave)
                 for i in range(len(notes)):
-                    print(" : ".join((",".join(notes[i].name),str(freqs[i]))),file=f)
+                    print(" : ".join((notes[i].name, str(freqs[i]))),file=f)
 
 if __name__ == '__main__':
     main()
