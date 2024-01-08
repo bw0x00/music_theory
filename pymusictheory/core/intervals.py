@@ -31,7 +31,7 @@ _reverse_interval_distance = {
             21  : ('major_thirteenth',      'M13',  'd14'                   ),
             22  : ('minor_fourteenth',      'm14',  'A13'                   ),
             23  : ('major_fourteenth',      'M14',  'd15'                   ),
-            25  : ('perfect_fifteenth',     'P15',  'A14',  'double_octave' )
+            24  : ('perfect_fifteenth',     'P15',  'A14',  'double_octave' )
             }
         }
 
