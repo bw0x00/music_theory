@@ -48,10 +48,10 @@ class TestIntervals(unittest.TestCase):
         self.assertTrue(str(j) == 'tritone')
         self.assertTrue(j.distance == 6)
         self.assertTrue(j.name == 'tritone' )
-        self.assertTrue(j.short_names == ['d5', 'A4'])
+        self.assertTrue(j.short_names == ('d5', 'A4'))
         k = Interval('semitone')
-        self.assertTrue(k.short_names == ['m2', 'A1'])
-        self.assertTrue(k.short_names == ['m2', 'A1'])
+        self.assertTrue(k.short_names == ('m2', 'A1'))
+        self.assertTrue(k.short_names == ('m2', 'A1'))
         self.assertTrue(str(k) == 'minor_second')
         self.assertTrue(k.distance == 1)
         with self.assertRaises(ValueError):
