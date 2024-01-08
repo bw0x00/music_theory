@@ -10,6 +10,8 @@ class TestScale(unittest.TestCase):
         Cmaj = [['c'], ['d'], ['e'], ['f'], ['g'], ['a'], ['b']]
         s = Scale(root='c', scale='major')
         self.assertTrue(s.get_scale() == Cmaj)
+        print(s.get_scale_frequencies(4))
+        self.assertTrue(s.get_scale_frequencies(4)[5] == 440.0)
 
     def test_amin(self):
         Amin = [['a'], ['b'], ['c'], ['d'], ['e'], ['f'], ['g']]

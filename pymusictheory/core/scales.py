@@ -104,15 +104,16 @@ class Scale(ChromaticScale):
         """ Returns one octave of the starting with the root key in octave
         'start_octave'
         """
+        root_to_anchor = self.temperament.name_to_distance(self._root) \
+                        + self.temperament.length * start_octave \
+                        - self._anchor_distance
         # TODO: calculate based on distance to anchor to prevent rounding errors 
         scale = []
-        start_freq = self._calc_octave(start_octave)[
-            self.temperament.name_to_distance(self._root)].frequency
         i = 0
         for k in scales_steps[self.temperament.length][self._scalename]:
             try:
-                scale.append(
-                    self.temperament.get_note_frequency(start_freq, i))
+                scale.append(self.temperament.get_note_frequency(self._anchor,
+                                                                 root_to_anchor + i))
                 i = i + k
             except KeyError:
                 pass
