@@ -79,15 +79,18 @@ class Scale(ChromaticScale):
 
         super().__init__(anchor, temperament)
 
-        # test if root is a valid note -> name_to_distance raises exception if invalid
-        self.temperament.name_to_distance(root)
+        # test if root is valid (i.e Pitchclass or Pitchclass name) ->
+        # name_to_distance raises exception if invalid
+        if type(root) is not notes.PitchClass:
+            self._root  = notes.PitchClass(str(root), super())
+        else:
+            self._root = root
 
         if scale not in scales_steps[self.temperament.length]:
             raise ValueError(f"Unknown scale {scale}")
         else:
             self._scalename = scale
 
-        self._root = root
         self._indices = self._calc_filter()
 
     def get_scale(self) -> list:
@@ -97,17 +100,15 @@ class Scale(ChromaticScale):
         scale = []
         for k in self._indices:
             scale.append(notes.PitchClass(k))
-            #self.temperament.distance_to_name(k))
         return scale
 
     def get_scale_frequencies(self, start_octave=4) -> list:
         """ Returns one octave of the starting with the root key in octave
         'start_octave'
         """
-        root_to_anchor = self.temperament.name_to_distance(self._root) \
+        root_to_anchor = self._root.numeric \
                         + self.temperament.length * start_octave \
                         - self._anchor_distance
-        # TODO: calculate based on distance to anchor to prevent rounding errors 
         scale = []
         i = 0
         for k in scales_steps[self.temperament.length][self._scalename]:
@@ -121,7 +122,8 @@ class Scale(ChromaticScale):
 
     def _calc_filter(self):
         indices = []
-        i = self.temperament.name_to_distance(self._root)
+#        i = self.temperament.name_to_distance(self._root)
+        i = self._root.numeric
         for step in scales_steps[self.temperament.length][self._scalename]:
             indices.append(i)
             i = (i + step) % self.temperament.length
@@ -156,7 +158,7 @@ class Scale(ChromaticScale):
 
     @__contains__.register
     def _2(self, a:intervals.Interval):
-        return notes.Note(self.temperament.name_to_distance(self._root) + a ) in self
+        return notes.Note(self._root.numeric + a) in self
 
     @__contains__.register
     def _3(self, a: notes.Note):

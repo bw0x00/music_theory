@@ -6,11 +6,15 @@ from pymusictheory.core.notes import PitchClass
 
 class TestScale(unittest.TestCase):
 
+    def test_init(self):
+        s = Scale(root='c', scale='major')
+        pc = PitchClass('c')
+        s2 = Scale(root=pc)
+
     def test_cmaj(self):
         Cmaj = [['c'], ['d'], ['e'], ['f'], ['g'], ['a'], ['b']]
         s = Scale(root='c', scale='major')
         self.assertTrue(s.get_scale() == Cmaj)
-        print(s.get_scale_frequencies(4))
         self.assertTrue(s.get_scale_frequencies(4)[5] == 440.0)
 
     def test_amin(self):
