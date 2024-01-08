@@ -7,9 +7,9 @@ from pymusictheory.core.scales import Scale
 
 class TestChords(unittest.TestCase):
 
-    def test_chord(self):
+    def test_chord_init(self):
         Cmaj = ['c4',  'e4',  'g4']
-        s = Chord(root='c', chord='major')
+        s = Chord('major', root='c')
         self.assertTrue(s.get_chord() == Cmaj)
 
         C5 = ['c4', 'g4']
@@ -21,9 +21,17 @@ class TestChords(unittest.TestCase):
         s.voicing = (3,3,4)
         self.assertTrue(s.get_chord() == Cmaj2)
 
+        i_cmaj = (Interval('perfect_unison'),
+                  Interval('major_third'),
+                  Interval('perfect_fifth')
+                )
+        s_i = Chord(i_cmaj, root='c')
+        self.assertTrue(s_i == i_cmaj)
+        self.assertTrue(s_i == Cmaj)
+
     def test_chord_composition(self):
         Cmaj = ['c4', 'e4', 'g4' ]
-        s = Chord(root='c', chord='powerchord')
+        s = Chord('powerchord', root='c')
         s2 = s + PitchClass('e')
         with self.assertRaises(ValueError):
             s3 = s + Note('e4')
@@ -43,9 +51,9 @@ class TestChords(unittest.TestCase):
         Cmaj = [261.63, 329.63, 392.0]
         Cmaj7 = [261.63, 329.63, 392.0, 493.88]
 
-        s = Chord(root='c', chord='major')
+        s = Chord('major', root='c')
         self.assertTrue(s.get_frequencies() == Cmaj)
-        s = Chord(root='c', chord='major7')
+        s = Chord('major7', root='c')
         self.assertTrue(s.get_frequencies() == Cmaj7)
 
     def test_chord_contains(self):
@@ -53,7 +61,7 @@ class TestChords(unittest.TestCase):
         i = Interval(7)
         n = Note('g4')
         Cmaj = [261.63, 329.63, 392.0]
-        s = Chord(root='c', chord='major')
+        s = Chord('major', root='c')
 
         self.assertTrue(pc in s)
         self.assertTrue(i in s)
@@ -69,7 +77,7 @@ class TestChords(unittest.TestCase):
 
     def test_chord_scale(self):
         scale = Scale('c')
-        c4 = Chord('c','major')
+        c4 = Chord('major',root='c')
 
         self.assertTrue(c4 in scale)
         # vocing doesn't matter

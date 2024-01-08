@@ -28,6 +28,11 @@ scales_steps = {
     }
 }
 
+#check integrity of scale_steps:
+for t in scales_steps:
+    for s in scales_steps[t]:
+        if sum(scales_steps[t][s]) != t:
+            raise ValueError(f"Sum of steps in {s}: {scales_steps[t][s]} != {t}")
 
 # Indirection required to allow scales to work with Note objects
 class ChromaticScale(_CoreChromaticScale):
@@ -88,6 +93,8 @@ class Scale(ChromaticScale):
 
         if scale not in scales_steps[self.temperament.length]:
             raise ValueError(f"Unknown scale {scale}")
+        elif sum(scales_steps[self.temperament.length][scale]) != self.temperament.length:
+            raise ValueError(f"Sum of steps in {scale} != {t}")
         else:
             self._scalename = scale
 

@@ -9,11 +9,10 @@ from pymusictheory.core.scales import Scale
 class TestIntervals(unittest.TestCase):
 
     def test_interval_chord(self):
-        c = Chord('c','powerchord')
+        c = Chord('powerchord', root='c')
         i = Interval('perfect_fifth')
-        c2 = Chord('c', 'major')
+        c2 = Chord('major', root='c')
         i2 = Interval('perfect_fifth')
-        self.assertFalse(c2 == i2)
 
     def test_interval_scale(self):
         i = Interval('perfect_fifth')

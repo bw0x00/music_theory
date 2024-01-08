@@ -79,6 +79,17 @@ class Interval:
         return self == list(a)
 
     @singledispatchmethod
+    def __lt__(self,a):
+        if type(a) is Interval:
+            return self.distance < a.distance
+        else:
+            return NotImplemented
+
+    @__lt__.register
+    def _1(self, a: int):
+        return self.distance < a
+
+    @singledispatchmethod
     def __radd__(self, a):
         return NotImplemented 
 

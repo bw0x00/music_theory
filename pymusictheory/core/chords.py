@@ -20,30 +20,47 @@ chord_integer = {
 
 class Chord:
 
-    def __init__(self, root: str, chord, voicing=None,
+    def __init__(self, chord, root, voicing=None,
                  chromaticscale=ChromaticScale()):
         """ Creates a Chord object for 'root' and 'chord' (integer list).
         'root' must be name of PitchClass (str) """
         self._scale = chromaticscale
         self._root_index = self._scale.temperament.name_to_distance(root)
         self._root_name = root
+        self._chord = self._dispatch_init(chord, root, voicing, chromaticscale)
         if voicing:
             self._voicing = tuple(voicing)
         else:
             self._voicing = None
 
-        if type(chord) is str: # test if chord definition is in chord_inter
-            self._chord = chord_integer[self._scale.temperament.length][chord]
-        else: #chord definition must be integer list
-            # test if chord is integer list
-            for x in chord:
-                if type(x) is not int:
-                    raise ValueError("Chord definition must be from predefined"
-                    + "chords or a list of integers "
-                    +" (e.g., a major chord would be [0, 4, 7]")
-            self._chord = tuple(sorted(chord))
         if self._voicing and len(self._chord) != len(self._voicing):
             raise ValueError("len(voicing) != len(chord)")
+
+    # prevent bug in singledispatchmethod https://bugs.python.org/issue41122
+    @singledispatchmethod
+    def _dispatch_init(self, chord, root, voicing, chromaticscale):
+        raise ValueError(f"Chord() not implemented for type(chord)={type(chord)}")
+
+    @_dispatch_init.register
+    def _1(self, chord: str, root, voicing, chromaticscale):
+        return chord_integer[chromaticscale.temperament.length][chord]
+
+    @_dispatch_init.register(tuple)
+    @_dispatch_init.register(list)
+    def _2(self, chord , root, voicing, chromaticscale):
+        if type(chord[0]) is intervals.Interval:
+            c = self._chord_int_from_intervals(chord)
+        else:
+            c = chord
+        for x in c:
+           if type(x) is not int:
+               raise ValueError("Chord definition must be from predefined"
+                   + "chords or a list of integers "
+                   +" (e.g., a major chord would be [0, 4, 7]")
+        return tuple(sorted(c))
+
+    def _chord_int_from_intervals(self, intervals):
+        return tuple(x.distance for x in intervals)
 
     def get_chord(self) -> list:
         """ Returns the list with the notes of the chord. Optional: provide
@@ -92,7 +109,7 @@ class Chord:
             c.append(d)
             v = [x for x in self._voicing]
             v.append(o)
-        return Chord(root=self._root_name, chord=c, voicing=v,
+        return Chord(c, root=self._root_name, voicing=v,
                      chromaticscale=self._scale)
 
     @__add__.register
@@ -106,7 +123,7 @@ class Chord:
                 v.append(v[0])
             else:
                 v = None
-        ret = Chord(self._root_name, new_chord_int, v,self._scale)
+        ret = Chord(new_chord_int, self._root_name, v, self._scale)
         return ret
 
     @__add__.register
@@ -121,7 +138,7 @@ class Chord:
                     v.append(v[0])
                 else:
                     v.append(v[0] + 1)
-        return Chord(self._root_name, new_chord_int, v ,self._scale)
+        return Chord(new_chord_int, self._root_name, v ,self._scale)
 
     @singledispatchmethod
     def __eq__(self,a):
@@ -130,9 +147,28 @@ class Chord:
         else:
             raise ValueError(f'__eq__ not defined for type {type(a)}')
 
-    @__eq__.register
-    def _1(self, a: intervals.Interval):
-        return self.get_chord()[::-1] == a
+    @__eq__.register(tuple)
+    @__eq__.register(list)
+    def _1(self, a ):
+        isint = True
+        isinterval = True
+        isstr = True
+        for i in a:
+            if type(i) is not int:
+                isint = False
+            if type(i) is not intervals.Interval:
+                isinterval = False
+            if type(i) is not str:
+                isstr = False
+        if isint:
+            return self._chord == a
+        elif isinterval:
+            return self._chord == self._chord_int_from_intervals(a)
+        elif isstr:
+            return self.get_chord() == a
+        else:
+            raise ValueError("Chord can only compared to lists/tuple containing"
+                             + " int or Interval. Mixed content is not supported")
 
     @singledispatchmethod
     def __contains__(self,a):
@@ -171,6 +207,10 @@ class Chord:
     @__contains__.register
     def _5(self,a: int):
         return self.__contains__(float(a))
+
+    @property
+    def chord_int(self):
+        return self._chord
 
     @property
     def voicing(self):
