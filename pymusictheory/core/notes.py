@@ -127,6 +127,10 @@ class Note:
     def __sub__(self, a):
         return NotImplemented
 
+    @__sub__.register
+    def _1(self, a: int):
+        return Note(self.distance-a, self._chromaticscale)
+
     #!!! __sub__ for type(note) will be registered from .intervals !!!
 
     @singledispatchmethod
