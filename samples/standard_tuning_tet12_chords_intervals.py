@@ -47,17 +47,16 @@ def main():
 
     for t in temperament:
         cs = ChromaticScale(temperament=temperament[t])
-        filename = "".join(("chords_int_",root_note,str(octave),"_",
-        "C",".txt"))
+        filename = "".join(("chords_int_from_intervals.txt"))
         with open("/".join((dirname,filename)),'w') as f:
             out = dict()
             for chord in chords:
-                print("".join(("> Chord '",root_note,"_", chord, "': ",
-                               dirname,"/",filename )) )
+                print("".join((dirname,"/",filename,
+                               "> '",root_note,"_", chord, "'")) )
                 i = [Interval(x) for x in chords[chord]]
                 c = Chord(i, root_note, chromaticscale=cs )
                 out[chord] = c.chord_int
-            print(json.dumps(out,indent=4),file=f)
+            print(json.dumps(out),file=f)
 
 if __name__ == '__main__':
     main()

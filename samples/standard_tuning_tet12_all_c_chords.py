@@ -23,7 +23,7 @@ def main():
         cs = ChromaticScale(temperament=temperament[t])
         for chord in chord_integer[cs.temperament.length]:
             filename = "".join(("chords_",root_note,str(octave),"_", chord,".txt"))
-            print("".join(("> Chord '",root_note,"_", chord, "': ", dirname,"/",filename )) )
+            print("".join((dirname,"/", filename, "> Chord '",root_note,"_", chord  )) )
             with open("/".join((dirname,filename)),'w') as f:
                 c = Chord(chord, root_note, chromaticscale=cs)
                 print(", ".join( (str(x) for x in c.get_chord()  )  ) ,file=f)

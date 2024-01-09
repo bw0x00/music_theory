@@ -21,7 +21,7 @@ def main():
     for t in temperament:
         for scale in scales_steps[temperament[t].length]:
             filename = "".join(("scale_",root_note,str(octave),"_", scale,".txt"))
-            print("".join(("> Scale '",root_note,"_", scale, "': ", dirname,"/",filename )) )
+            print("".join((dirname,"/", filename, "> Scale '",root_note,"_", scale )) )
             with open("/".join((dirname,filename)),'w') as f:
                 s = Scale(scale=scale)
                 notes = s.get_scale()
