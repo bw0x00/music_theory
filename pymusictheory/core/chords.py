@@ -229,6 +229,9 @@ class Chord:
     def _5(self,a: int):
         return self.__contains__(float(a))
 
+    def __iter__(self):
+        return self.get_chord().__iter__()
+
     @property
     def chord_int(self):
         return self._chord

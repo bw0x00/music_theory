@@ -2,7 +2,10 @@
 
 from functools import singledispatchmethod
 from ..core import notes
+from ..core import scales
+from ..core import chords
 from .coreinstruments import _StringedInstrument
+
 
 tunings = {
     6 : {
@@ -68,6 +71,8 @@ class Guitar(_StringedInstrument):
 class FretBoard():
 
     def __init__(self,strings,opennotes,frets):
+        self._strings = strings
+        self._frets = frets
         self._notes = []
         for x in range(strings):
             string = []
@@ -77,6 +82,41 @@ class FretBoard():
 
     def __iter__(self):
         return self._fretboard.__iter__()
+
+    @singledispatchmethod
+    def get_indices(self, n):
+        raise NotImplementedError(f"not implemented for {type(n)}")
+
+    @get_indices.register
+    def _1(self, n: notes.Note):
+        ret = [] * self._strings
+        for s in range(len(self._notes)):
+            for f in range(len(self._notes[s])):
+                if n == self._notes[s][f]:
+                    ret.append( (s,f) )
+        return tuple(ret)
+
+    @get_indices.register(notes.PitchClass)
+    @get_indices.register(chords.Chord)
+    def _2(self, c: notes.PitchClass):
+        ret = []
+        for note in c:
+            ret.extend(self.get_indices(note))
+        return tuple(ret)
+
+    @get_indices.register
+    def _3(self, n: scales.Scale):
+        ret = []
+        for note in n:
+            if note > self._notes[0][0] and note < self._notes[-1][-1]:
+                ret.append(self.get_indices(note))
+        return tuple(ret)
+
+    def __str__(self):
+        ret = []
+        for s in self._notes:
+            ret.append( ", ".join( (str(x) for x in s) ))
+        return "\n".join(ret)
 
     @property
     def all_notes(self):

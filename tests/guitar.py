@@ -3,6 +3,7 @@ import unittest
 from fractions import Fraction
 from pymusictheory.core.scales import Scale
 from pymusictheory.core.notes import PitchClass, Note
+from pymusictheory.core.chords import Chord
 from pymusictheory.instruments.guitar import Guitar
 
 class TestGuitar(unittest.TestCase):
@@ -29,6 +30,20 @@ class TestGuitar(unittest.TestCase):
         f = g.fretboard.all_notes
         self.assertTrue(len(f) == 6)
         self.assertTrue(min( (len(x) == 25 for x in f) ))
+
+
+    def test_getindices(self):
+        g = Guitar()
+        f = g.fretboard
+        i = f.get_indices(Note('e4'))
+        i2 = f.get_indices(Chord(root='c',chord='major',voicing=(3,3,4)))
+        i3 = f.get_indices(PitchClass('c'))
+        i4 = f.get_indices(Scale('c'))
+
+
+        for string, fret in i:
+            self.assertTrue(f.all_notes[string][fret] == Note('e4'))
+
 
 if __name__ == '__main__':
     unittest.main()
