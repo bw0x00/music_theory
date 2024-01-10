@@ -170,6 +170,7 @@ class Note:
             raise ValueError(
                 "Division of 'Note' with numbers <= 0 not allowed")
 
+    # TODO: handle notes with # and flat names
     def __str__(self):
         return self._name
 

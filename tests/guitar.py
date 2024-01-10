@@ -24,5 +24,11 @@ class TestGuitar(unittest.TestCase):
                             + f"{str(x.highest_note)} != {str(n2)}")
 
 
+    def test_fretboard(self):
+        g = Guitar()
+        f = g.fretboard.all_notes
+        self.assertTrue(len(f) == 6)
+        self.assertTrue(min( (len(x) == 25 for x in f) ))
+
 if __name__ == '__main__':
     unittest.main()

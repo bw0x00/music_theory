@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from functools import singledispatchmethod
 from ..core import notes
 from .coreinstruments import _StringedInstrument
 
@@ -23,45 +24,63 @@ class Guitar(_StringedInstrument):
 
             Default: E-Standard 6 String Guitar
         """
-
-        # TODO: extract distances_to_tunings as method
-        t = []
-        if type(tuning) is str:
-            t_distances = tunings[strings][tuning]
-            for s in t_distances:
-                if len(t) > 0:
-                    t.append(t[-1]+s)
-                else:
-                    t.append(notes.Note(root_of_tuning))
-        elif type(tuning) is list or type(tuning) is tuple:
-            is_strs = True
-            is_distances = True
-            is_notes = True
-            for x in tuning:
-                if type(x) is str:
-                    is_distance = False
-                    is_notes = False
-                    t.append(notes.Note(x))
-                if type(x) is int:
-                    is_strs = False
-                    is_notes = False
-                    if len(t) > 0:
-                        t.append(t[-1]+x)
-                    else:
-                        t.append(notes.Note(root_of_tuning))
-                if type(x) is notes.Note:
-                    is_strs = False
-                    is_distances = False
-                    t.append(notes.Note(x))
-            if not is_strs or not is_disance or not is_notes:
-                ValueError("Unsupported tuning defintion: Definition must be"
-                       + " semitone distance between strings"
-                       + " XOR notes.Note for open strings")
+        t = self._dispatched_init(tuning, root_of_tuning, strings)
         if len(t) != strings:
             raise ValueError('Tuning does not match the amount of strings')
 
+        self._frets = frets
         # fretboard have a distance of semitones = frets + open
         super().__init__(strings, t, [frets+1]*strings)
+
+    @singledispatchmethod
+    def _dispatched_init(self, tuning, *args, **kwargs):
+        raise ValueError('Unknown tuning')
+
+    @_dispatched_init.register(tuple)
+    @_dispatched_init.register(list)
+    def _1(self, tuning, root: notes.Note, *args, **kwargs):
+        if min([type(x) is int for x in tuning]):
+            t= []
+            for s in tuning:
+                if len(t) > 0:
+                    t.append(t[-1]+s)
+                else:
+                    t.append(notes.Note(root))
+            return tuple(t)
+        if min([type(x) is str for x in tuning]):
+            tuning = ( notes.Note(x) for x in tuning )
+        if min([type(x) is notes.Note for x in tuning]):
+            t = tuning
+            return tuple(t)
+        ValueError("Unsupported tuning defintion: Definition must be"
+                   + " semitone distance between strings"
+                   + " XOR notes.Note for open strings")
+
+    @_dispatched_init.register
+    def _2(self, tuning: str, root, strings):
+        return self._dispatched_init(tunings[strings][tuning], root)
+
+    @property
+    def fretboard(self):
+        return FretBoard(self._strings,self._tuning,self._frets)
+
+
+class FretBoard():
+
+    def __init__(self,strings,opennotes,frets):
+        self._notes = []
+        for x in range(strings):
+            string = []
+            for y in range(frets+1):
+                string.append(opennotes[x]+y)
+            self._notes.append(string)
+
+    def __iter__(self):
+        return self._fretboard.__iter__()
+
+    @property
+    def all_notes(self):
+        return self._notes
 
 if __name__ == "__main__":
     pass
