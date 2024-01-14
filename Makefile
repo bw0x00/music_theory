@@ -12,6 +12,8 @@ examples:
 	python3 -m samples.standard_tuning_tet12_all_c_scales $(doc_generated)
 	python3 -m samples.standard_tuning_tet12_all_c_chords $(doc_generated)
 	python3 -m samples.standard_tuning_tet12_chords_intervals $(doc_generated)
+	python3 -m samples.standard_tuning_tet12_chords_intervals $(doc_generated)
+	python3 -m samples.guitar_fretboard_all_notes_e-standard $(doc_generated)
 
 clean:
 	rm -rf $(doc_generated)

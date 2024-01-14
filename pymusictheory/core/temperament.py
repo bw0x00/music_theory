@@ -129,7 +129,8 @@ class _CoreChromaticScale:
         l = len(self._temperament)
         note = self._temperament.distance_to_name(distance % l)
         octave = int((distance-distance % l) / l)
-        return ''.join((note[0], str(octave)))
+#        return ''.join((note[0], str(octave)))
+        return "/".join( [''.join((x,str(octave) )) for x in note]  )
 
     def split_SPN(self, spn: str):
         match = re.match(r"([abcdefg][b#]?)([0-9])", spn.lower(), re.I)
