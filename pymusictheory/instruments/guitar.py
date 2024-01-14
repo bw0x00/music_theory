@@ -103,7 +103,7 @@ class FretBoard():
 
     @get_indices.register(notes.PitchClass)
     @get_indices.register(chords.Chord)
-    def _2(self, c: notes.PitchClass):
+    def _2(self, c):
         ret = []
         for note in c:
             ret.extend(self.get_indices(note))
@@ -113,7 +113,7 @@ class FretBoard():
     def _3(self, n: scales.Scale):
         ret = []
         for note in n:
-            if note > self._notes[0][0] and note < self._notes[-1][-1]:
+            if note >= self._notes[0][0] and note <= self._notes[-1][-1]:
                 ret.append(self.get_indices(note))
         return tuple(ret)
 
