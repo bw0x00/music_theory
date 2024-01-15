@@ -75,12 +75,22 @@ class FretBoard():
     def __init__(self,strings,opennotes,frets):
         self._strings = strings
         self._frets = frets
+
         self._notes = []
         for x in range(strings):
             string = []
             for y in range(frets+1):
                 string.append(opennotes[x]+y)
             self._notes.append(string)
+
+        # dimensions for svg fretboard
+        # TODO: make fretboard customizable
+        self._innerspacing= 20
+        self._width = (self._frets+1) * 30 * 2 + 2 * self._innerspacing
+        self._height = (self._strings-1) * 15 * 2 + 2 * self._innerspacing
+        self._string_distance = (self._height-2*self._innerspacing)/(self._strings-1)
+        self._fret_distance   = (self._width -2*self._innerspacing)/(self._frets)
+        self._svg_fretboard = self._draw_fretboard()
 
     def __iter__(self):
         return self._fretboard.__iter__()
@@ -123,21 +133,16 @@ class FretBoard():
             ret.append( ", ".join( (str(x) for x in s) ))
         return "\n".join(ret)
 
-    def _draw_fretboard(self,notes_list: list) -> svg.SVG:
+    def _draw_fretboard(self) -> svg.SVG:
         """
-            Prints the fretboards as an svg string.
-            a) without paramenters: full fretboard with all notes
-            b) with chord:
-                - without voicing: all pitchclasses in the chord
-                - with voicing: all locations of notes in chord
-            c) with pitchclass: all locations of notes from pitchclass
+            Prints the fretboards as an list of svg elements.
+            Must be placed in canvas.
         """
-        innerspacing= 20
-        width = self._frets * 30 * 2 + 2 * innerspacing
-        height = (self._strings-1) * 15 * 2 + 2 * innerspacing
-
-        string_distance = (height-2*innerspacing)/(self._strings-1)
-        fret_distance   = (width -2*innerspacing)/(self._frets  -1)
+        innerspacing= self._innerspacing
+        width = self._width
+        height = self._height
+        string_distance = self._string_distance
+        fret_distance   = self._fret_distance
 
         fretboard = []
         fretboard.append(svg.Style(text=dedent("""
@@ -155,33 +160,48 @@ class FretBoard():
                                       stroke='black',stroke_width=5))
 
         #frets
-        for i in range(self._frets):
+        for i in range(self._frets+1):
             x = innerspacing + fret_distance * i
             fretboard.append(svg.Line(x1=x, x2=x, y1=innerspacing,
                                       y2=height-innerspacing,
                                       stroke='black', stroke_width=5))
+        return fretboard
 
+    def _draw_notes(self, notes_list, left=False) -> list:
+        """
+            Returns svg elements to be added to the fretboard representing the
+            notes in "notes". Notes can be a list of notes.Note or
+            notes.PitchClass.
+        """
+        innerspacing= self._innerspacing
+        width = self._width
+        height = self._height
+        string_distance = self._string_distance
+        fret_distance   = self._fret_distance
+
+        notes_svg = []
         for n in notes_list:
             for (y,x) in self.get_indices(n[0]):
-                fretboard.append(svg.Circle(cx=innerspacing+fret_distance*x,
+                if not left:
+                    y = self._strings - (y+1)
+                notes_svg.append(svg.Circle(cx=innerspacing+fret_distance*x,
                                             cy=innerspacing+string_distance*y,
                                             r=(string_distance*0.9)/2,
                                             stroke=n[1], stroke_width=1,
                                             fill=n[1] ))
-                fretboard.append(svg.Text(  x=innerspacing+fret_distance*x-3,
+                notes_svg.append(svg.Text(  x=innerspacing+fret_distance*x-3,
                                             y=innerspacing+string_distance*y+3,
                                             class_=['small'],
                                             text=n[0].name,
                                             fill='white'))
+        return notes_svg
 
 
-        canvas = svg.SVG(width=width, height=height, elements= fretboard)
-        return(str(canvas))
-
-    def svg(self):
-        return self._draw_fretboard((   ( notes.PitchClass('e'),'blue'),
-                                        ( notes.PitchClass('a#'),'green' ),
-                                        ( notes.PitchClass('g'),'red' ) ))
+    def svg(self, n) -> svg.SVG:
+        fret_diagram = self._svg_fretboard[:]
+        fret_diagram.extend(self._draw_notes(n))
+        return svg.SVG(width=self._width, height=self._height,
+                       elements=fret_diagram)
 
     @property
     def all_notes(self):

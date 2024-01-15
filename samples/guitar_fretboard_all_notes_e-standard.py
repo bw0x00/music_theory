@@ -3,6 +3,7 @@
 import sys,os
 import svg
 from pymusictheory.instruments.guitar import Guitar
+from pymusictheory.core import notes
 
 def main():
     print("\nPrint the fretboard for e standard/ 24frets to stdout")
@@ -21,7 +22,10 @@ def main():
 
     print("".join((dirname,"/", filename, ".svg> Fretbaord SVG'" )) )
     with open("/".join((dirname, ".".join( (filename,"svg") ))),'w') as f:
-        print(g.fretboard.svg(),file=f)
+        svg = g.fretboard.svg((( notes.PitchClass('e'),'blue'),
+                               ( notes.PitchClass('a#'),'green' ),
+                               ( notes.PitchClass('g'),'red' )))
+        print(svg,file=f)
 
 if __name__ == '__main__':
     main()
