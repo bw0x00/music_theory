@@ -86,11 +86,49 @@ class Note:
         return a.lower() == self.name
 
     @singledispatchmethod
+    def __ge__(self, a):
+        if type(a) == type(self):
+            return a.distance <= self.distance
+        else:
+            return NotImplemented
+
+    @__ge__.register
+    def _1(self, a: int):
+        return a <= self.distance
+
+    @__ge__.register
+    def _2(self, a: float):
+        return a <= self.frequency
+
+    @__ge__.register
+    def _3(self, a: str):
+        return self._chromaticscale.SPN_to_distance(a) <= self.distance
+
+    @singledispatchmethod
+    def __le__(self, a):
+        if type(a) == type(self):
+            return a.distance >= self.distance
+        else:
+            return NotImplemented
+
+    @__le__.register
+    def _1(self, a: int):
+        return a >= self.distance
+
+    @__le__.register
+    def _2(self, a: float):
+        return a >= self.frequency
+
+    @__le__.register
+    def _3(self, a: str):
+        return self._chromaticscale.SPN_to_distance(a) >= self.distance
+
+    @singledispatchmethod
     def __gt__(self, a):
         if type(a) == type(self):
             return a.distance < self.distance
         else:
-            return NotImplemented 
+            return NotImplemented
 
     @__gt__.register
     def _1(self, a: int):
@@ -170,7 +208,6 @@ class Note:
             raise ValueError(
                 "Division of 'Note' with numbers <= 0 not allowed")
 
-    # TODO: handle notes with # and flat names
     def __str__(self):
         return self._name
 

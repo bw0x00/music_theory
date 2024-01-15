@@ -27,7 +27,11 @@ class TestNotes(unittest.TestCase):
         self.assertTrue(a4 != 'C4')
         self.assertTrue(a4 == 440)
         self.assertTrue(a4 < 'A#4')
+        self.assertTrue(a4 <= 'A#4')
+        self.assertTrue(a4 <= 'A4')
         self.assertTrue(a4 > 'Ab4')
+        self.assertTrue(a4 >= 'Ab4')
+        self.assertTrue(a4 >= 'A4')
         self.assertTrue(a4 in pc_a)
         self.assertTrue(a4 not in pc_d)
 
