@@ -146,7 +146,9 @@ class FretBoard():
 
         fretboard = []
         fretboard.append(svg.Style(text=dedent("""
-                            .small {font: bold, 20px sans-serif; fill: white }
+                            .notebig {font: bold 12px sans-serif; fill: white }
+                            .notemedium{font: bold 12px sans-serif; fill: white }
+                            .notesmall{font: bold 12px sans-serif; fill: white }
                                             """)))
         #nut
         fretboard.append(svg.Rect(x=innerspacing-5,y=innerspacing,width=10,
@@ -189,19 +191,70 @@ class FretBoard():
                                             r=(string_distance*0.9)/2,
                                             stroke=n[1], stroke_width=1,
                                             fill=n[1] ))
-                notes_svg.append(svg.Text(  x=innerspacing+fret_distance*x-3,
-                                            y=innerspacing+string_distance*y+3,
-                                            class_=['small'],
-                                            text=n[0].name,
-                                            fill='white'))
+                if len(n[0].name) == 1:
+                    notes_svg.append(svg.Text(  x=innerspacing+fret_distance*x-3,
+                                                y=innerspacing+string_distance*y+3,
+                                                class_=['note'],
+                                                text=n[0].name.upper(),
+                                                fill='white'))
+                elif len(n[0].name) == 2:
+                    notes_svg.append(svg.Text(  x=innerspacing+fret_distance*x-7,
+                                                y=innerspacing+string_distance*y+3,
+                                                class_=['note'],
+                                                text=n[0].name.upper(),
+                                                fill='white'))
+                elif len(n[0].name) > 2:
+                    notes_svg.append(svg.Text(  x=innerspacing+fret_distance*x-10,
+                                                y=innerspacing+string_distance*y+3,
+                                                class_=['note'],
+                                                text=n[0].name.upper(),
+                                                fill='white'))
+ 
         return notes_svg
 
-
+    @singledispatchmethod
     def svg(self, n) -> svg.SVG:
+        """
+            Creates an svg fretboard with
+            a) a single notes.Note/notes.PitchClass X of color for n=X, color='blue'
+            b) a list of notes.Note/notes.PitchClass of colors for n=( (notes.X1, color1),
+                                                notes.X2,color2
+            c) a chord for n=chords.Chord, root_color=color1, notes_color=color2
+                (default: red, blue)
+            d) a scale for n=scales.Scale, root_color=color1, notes_color=color2
+                (default: red, blue)
+        """
         fret_diagram = self._svg_fretboard[:]
         fret_diagram.extend(self._draw_notes(n))
         return svg.SVG(width=self._width, height=self._height,
-                       elements=fret_diagram)
+                           elements=fret_diagram)
+
+    @svg.register(notes.Note)
+    @svg.register(notes.PitchClass)
+    def _1(self, n, color='blue'):
+        return self.svg( ((n,color),) )
+
+    @svg.register
+    def _2(self, n: chords.Chord, root_color="red", notes_color="green"):
+        n_list = []
+        if n.voicing:
+            n_list.append( (n[0], root_color) )
+            for x in n[1:]:
+                n_list.append( (x,notes_color) )
+        else:
+            n_list.append( (n.get_pitchclasses()[0], root_color) )
+            for x in n.get_pitchclasses()[1:]:
+                n_list.append( (x, notes_color) )
+
+        return self.svg(n_list)
+
+    @svg.register
+    def _3(self, n: scales.Scale, root_color="red", notes_color="green"):
+        n_list = []
+        n_list.append( (n[0], root_color) )
+        for x in n[1:]:
+            n_list.append( (x, notes_color) )
+        return self.svg(n_list)
 
     @property
     def all_notes(self):

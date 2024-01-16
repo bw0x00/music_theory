@@ -258,7 +258,10 @@ class PitchClass:
 
     @singledispatchmethod
     def __eq__(self, a):
-        return NotImplemented
+        if type(a) is PitchClass:
+            return a.numeric == self.numeric
+        else:
+            return NotImplemented
 
     @__eq__.register
     def _1(self, a: str):

@@ -40,6 +40,8 @@ class TestChords(unittest.TestCase):
         self.assertTrue(s2.get_chord() == Cmaj)
         self.assertTrue(s3.get_chord() == Cmaj)
 
+        self.assertTrue(s2.get_pitchclasses() == tuple([PitchClass(n) for n in Cmaj]))
+
         i = Interval(4)
         i2 = Interval(7)
         s4 = s + i
@@ -55,6 +57,10 @@ class TestChords(unittest.TestCase):
         self.assertTrue(s.get_frequencies() == Cmaj)
         s = Chord('major7', root='c')
         self.assertTrue(s.get_frequencies() == Cmaj7)
+
+    def test_chord_operators(self):
+        c = Chord('major', root='c')
+        self.assertTrue(c[0] == Note('c4'))
 
     def test_chord_contains(self):
         pc = PitchClass('e')

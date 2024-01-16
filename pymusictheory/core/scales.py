@@ -154,6 +154,9 @@ class Scale(ChromaticScale):
                 octaves[octave].append(super().get_octaves()[octave][k])
         return octaves
 
+    def __getitem__(self,key):
+        return self.get_scale()[key]
+
     def __str__(self):
         return ", ".join((str(x) for x in self.get_scale()))
 

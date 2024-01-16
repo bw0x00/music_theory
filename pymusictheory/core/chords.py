@@ -99,6 +99,9 @@ class Chord:
                 chord.append( notes.Note(n, self._scale)  )
         return chord
 
+    def get_pitchclasses(self) -> list:
+        return tuple([notes.PitchClass(n) for n in self.get_chord()])
+
     def get_frequencies(self) -> list:
         """ Returns the list of the frequencies of the chord. List can contain
         frequencies of multiple octaves. Optional: An list of octave numbers
@@ -110,6 +113,9 @@ class Chord:
         for e in chord:
             freqs.append(e.frequency)
         return freqs
+
+    def __getitem__(self,key):
+        return self.get_chord()[key]
 
     def __str__(self):
         """ asdas """

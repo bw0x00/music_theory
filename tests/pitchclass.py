@@ -19,8 +19,10 @@ class TestPitchClass(unittest.TestCase):
     def test_operator(self):
         a4 = Note('A4')
         pc_a = PitchClass('A')
+        pc_a2 = PitchClass('A')
         pc_b = PitchClass('b')
 
+        self.assertTrue(pc_a == pc_a2)
         self.assertTrue(a4 in pc_a)
         self.assertTrue('a4' in pc_a)
         self.assertTrue(440.0 in pc_a)
