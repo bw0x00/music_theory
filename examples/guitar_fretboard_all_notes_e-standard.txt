@@ -1,0 +1,6 @@
+e2, f2, f#2/gb2, g2, g#2/ab2, a2, a#2/bb2, b2, c3, c#3/db3, d3, d#3/eb3, e3, f3, f#3/gb3, g3, g#3/ab3, a3, a#3/bb3, b3, c4, c#4/db4, d4, d#4/eb4, e4
+a2, a#2/bb2, b2, c3, c#3/db3, d3, d#3/eb3, e3, f3, f#3/gb3, g3, g#3/ab3, a3, a#3/bb3, b3, c4, c#4/db4, d4, d#4/eb4, e4, f4, f#4/gb4, g4, g#4/ab4, a4
+d3, d#3/eb3, e3, f3, f#3/gb3, g3, g#3/ab3, a3, a#3/bb3, b3, c4, c#4/db4, d4, d#4/eb4, e4, f4, f#4/gb4, g4, g#4/ab4, a4, a#4/bb4, b4, c5, c#5/db5, d5
+g3, g#3/ab3, a3, a#3/bb3, b3, c4, c#4/db4, d4, d#4/eb4, e4, f4, f#4/gb4, g4, g#4/ab4, a4, a#4/bb4, b4, c5, c#5/db5, d5, d#5/eb5, e5, f5, f#5/gb5, g5
+b3, c4, c#4/db4, d4, d#4/eb4, e4, f4, f#4/gb4, g4, g#4/ab4, a4, a#4/bb4, b4, c5, c#5/db5, d5, d#5/eb5, e5, f5, f#5/gb5, g5, g#5/ab5, a5, a#5/bb5, b5
+e4, f4, f#4/gb4, g4, g#4/ab4, a4, a#4/bb4, b4, c5, c#5/db5, d5, d#5/eb5, e5, f5, f#5/gb5, g5, g#5/ab5, a5, a#5/bb5, b5, c6, c#6/db6, d6, d#6/eb6, e6

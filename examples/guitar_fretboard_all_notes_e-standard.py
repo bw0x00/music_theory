@@ -17,7 +17,7 @@ def main():
         print("Output dir does not exist: " + dirname)
 
     g = Guitar('e2', tuning='standard', strings=6, frets=24)
-    filename = "guitar_fretboard_asii_e-standard_6_strings_24frets"
+    filename = "guitar_fretboard_all_notes_e-standard"
 
     print("".join((dirname,"/", filename, ".txt> Fretbaord ASCII'" )) )
     with open("/".join((dirname, ".".join( (filename,"txt") ))),'w') as f:

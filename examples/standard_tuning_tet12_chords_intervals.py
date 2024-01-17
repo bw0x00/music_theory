@@ -47,7 +47,7 @@ def main():
 
     for t in temperament:
         cs = ChromaticScale(temperament=temperament[t])
-        filename = "".join(("chords_int_from_intervals.txt"))
+        filename = "".join(("standard_tuning_tet12_chords_intervals.txt"))
         with open("/".join((dirname,filename)),'w') as f:
             out = dict()
             for chord in chords:

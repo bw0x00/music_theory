@@ -20,7 +20,8 @@ def main():
 
     for t in temperament:
         for scale in scales_steps[temperament[t].length]:
-            filename = "".join(("scale_",root_note,str(octave),"_", scale,".txt"))
+            filename = "".join(("standard_tuning_tet12_all_c_scales_",
+                                root_note,str(octave),"_", scale,".txt"))
             print("".join((dirname,"/", filename, "> Scale '",root_note,"_", scale )) )
             with open("/".join((dirname,filename)),'w') as f:
                 s = Scale(scale=scale)
