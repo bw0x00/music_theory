@@ -1,16 +1,49 @@
 #!/usr/bin/env python3
 
+"""Note and PitchClass Class definitions
+
+PitchClasses and Notes are fundamentel datatypes for this
+music theory package and are used and supported by all other
+classes like scales, chords or instruments.
+"""
+
 from functools import singledispatchmethod
 import re
 
 from .temperament import _CoreChromaticScale
 
 class Note:
+    """Object representing a Note
 
+    The Note object supports the initilization from different datatypes and
+    supports several mathematical operations on top of if.
+
+    Furthermore the Note Class is used as a fundamental class  and is supported
+    by all other classes in trallala.
+
+    Porperties:
+        name:
+            SPN name of the Note
+        distance:
+            Semitone distance to C0
+        frequency:
+            Frequency in Hz of the note
+    """
     @singledispatchmethod
     def __init__(self, note, chromaticscale=_CoreChromaticScale()):
-        """ Creates a Note Object from another Note object, SPN, distance to C0 (int) or a frequency
+        """ Initializes a Note Object
+
+        Creates a Note Object from another Note object, SPN, distance to C0 (int) or a frequency
         (float).
+
+        Args:
+            note:
+                Note, SPN (str), distance to C0 (int) or frequency (float)
+            chromaticscale:
+                ChromaticScale Object. Default: TET12
+        Raises:
+            ValueError:
+                Frequency, SPN, distance does not usable to create note from
         """
         if type(note) == type(self):
             self._shared_init(note.distance, chromaticscale)
@@ -226,10 +259,29 @@ class Note:
 
 
 class PitchClass:
+    """Object representing a ptichclass (e.g. all C notes in all octaves)
+
+    Properties:
+        numeric:
+            Numeric representation (i.e., 0 to 11)
+        name:
+            Str name of the PichClass (e.g. C,D... without added octave)
+    """
 
     def __init__(self, note, chromaticscale=_CoreChromaticScale()):
-        """ Creates the PitchClass containing 'note'; 'note' can be any of SPN,
-        distance to C0, PitchClass numeric (c=0,...) or frequency
+        """ initializes the PitchClass 
+
+        Pitchclass can be initialized from a note, SPN,  distance to C0,
+        PitchClass numeric (c=0,...) or frequency
+
+        Args:
+            note:
+                Refernce value for the intialization. Can be any of Note, SPN,
+                str name (e.g. 'a' without added octave), distance to C0 or frequency.
+            chromaticscale:
+                ChromaticScale used to for the definition. Default: TET12
+
+        Raises:
         """
         try:
             n = Note(note)

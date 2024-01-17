@@ -1,11 +1,32 @@
 #!/usr/bin/env python3
 
+""" Core definitions of temperaments, steps per octace
+
+    This packages supports TET12 by default. Additional temperaments can be
+    added to the temperament dict and afterwards used to initialize a 
+    chromaticscale:
+
+    temperament = {
+        '12TET' : TwelveTET()
+    }
+"""
+
 from fractions import Fraction
 import re
 
 
 # definition of temperaments
 class TwelveTET():
+    """ Definition of 12-TET
+
+    Definition of the names and distances and frequency calculation used in
+    a chromaticscale and therefore in all classes of this package.
+
+    Properties:
+        length:
+            Length (amount of steps) in an octave
+
+    """
     _len = 12
     _precision = 2
     _semitone_distance = {
@@ -43,17 +64,49 @@ class TwelveTET():
 
     def get_note_frequency(self, root, distance, precision=None):
         """ Returns the frequency of note with 'distance' to 'root' frequency
+
+        Args:
+            root:
+                root frequency used to calculate the target frequency
+            distance:
+                Semitone-step distance of target from root
+            precision:
+                Floating point precision of the return
+        Returns:
+            Frequency as float
         """
         if not precision:
             precision = self._precision
         return round(root * ((2**Fraction(1, self._len)) ** distance), precision)
 
     def distance_to_name(self, distance):
-        """ Translates any note distance to the number of the pitch class (int)
+        """ Translates any note distance to the name of the pitch class (int)
+
+        Args:
+            distance:
+                semitone distance to C. Must be int with a value in
+                range(self.length)
+        Returns:
+            Name of pitchclass as str
+        Raises:
+            KeyError:
+                Distance > self.length
         """
         return self._reverse_semitone_distance[distance]
 
     def name_to_distance(self, name):
+        """Translates a name of a pitchclass into the semitone distance.
+
+        Args:
+            name:
+                Name of pitchclass without added octave
+        Returns:
+            Numeric name of the pitchclass (name without added octave)
+        Raises:
+            ValueError:
+                Unknown name
+
+        """
         name = name.lower()
         if name in self._semitone_distance:
             return self._semitone_distance[name]
@@ -78,13 +131,25 @@ init_temperament()
 
 
 class _CoreChromaticScale:
+    """ 'Raw' ChromaticScales used by Notes and PitchClasses
+
+    This 'raw' Class is used to prevent circular dependencies of the classes
+    in this package and does not support higher level data types.
+
+    Please use trallala.core.scales.ChromaticSclae instead.
+
+    !DO NOT USE THIS CLASS OUTSIDE OF TRALLALA!
+
+    """
     _number_octaves = 9
 
     def __init__(self, note=('a4', 440), temperament=temperament['12TET']):
         """ Warning: Internal Class only. Please use ChromaticScale instead.
+
         Creates Chromatic Scale from given note (Scientific Pitch Notation)
         and a temperament distance list. For non-12 steps scales, a list of
-        tone with the correpsonding half-tone distance must be be provided in addition. Default: A4=440Hz and 12TET"""
+        tone with the correpsonding half-tone distance must be be provided 
+        in addition. Default: A4=440Hz and 12TET"""
 
         if type(note) is not list and type(note) is not tuple:
             raise ValueError(f"Wrong anchor note type: {type(note)}")
