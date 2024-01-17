@@ -1,6 +1,7 @@
 # Project structre
 doc/generated/*
 doc/pydoc/*
+site/*
 
 # vim swap
 *.swp

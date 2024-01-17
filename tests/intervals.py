@@ -1,10 +1,10 @@
 import unittest
 
 from fractions import Fraction
-from pymusictheory.core.intervals import Interval
-from pymusictheory.core.notes import Note, PitchClass
-from pymusictheory.core.chords import Chord
-from pymusictheory.core.scales import Scale
+from trallala.core.intervals import Interval
+from trallala.core.notes import Note, PitchClass
+from trallala.core.chords import Chord
+from trallala.core.scales import Scale
 
 class TestIntervals(unittest.TestCase):
 

@@ -1,10 +1,10 @@
 #!/bin/env python3
 
 import sys, os, json
-from pymusictheory.core.chords import Chord, chord_integer
-from pymusictheory.core.scales import ChromaticScale
-from pymusictheory.core.temperament import *
-from pymusictheory.core.intervals import Interval
+from trallala.core.chords import Chord, chord_integer
+from trallala.core.scales import ChromaticScale
+from trallala.core.temperament import *
+from trallala.core.intervals import Interval
 
 chords = {
         'major6'            : ('root', 'M3', 'P5', 'M6'),

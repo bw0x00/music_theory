@@ -1,10 +1,10 @@
 import unittest
 
 from fractions import Fraction
-from pymusictheory.core.scales import Scale
-from pymusictheory.core.notes import PitchClass, Note
-from pymusictheory.core.chords import Chord
-from pymusictheory.instruments.guitar import Guitar
+from trallala.core.scales import Scale
+from trallala.core.notes import PitchClass, Note
+from trallala.core.chords import Chord
+from trallala.instruments.guitar import Guitar
 
 class TestGuitar(unittest.TestCase):
 

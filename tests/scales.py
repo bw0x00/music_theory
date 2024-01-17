@@ -1,8 +1,8 @@
 import unittest
 
 from fractions import Fraction
-from pymusictheory.core.scales import Scale
-from pymusictheory.core.notes import PitchClass
+from trallala.core.scales import Scale
+from trallala.core.notes import PitchClass
 
 class TestScale(unittest.TestCase):
 

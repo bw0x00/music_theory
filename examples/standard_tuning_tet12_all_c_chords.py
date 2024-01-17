@@ -1,13 +1,13 @@
 #!/bin/env python3
 
 import sys,os
-from pymusictheory.core.chords import Chord, chord_integer
-from pymusictheory.core.scales import ChromaticScale
-from pymusictheory.core.temperament import *
+from trallala.core.chords import Chord, chord_integer
+from trallala.core.scales import ChromaticScale
+from trallala.core.temperament import *
 
 def main():
     print("\nGenerating all scales as defined in " +
-          "pymusictheory.chords for standard tuning with " +
+          "trallala.chords for standard tuning with " +
           "12TET for the root C4")
     print("Writing output into folder: " + sys.argv[1])
 

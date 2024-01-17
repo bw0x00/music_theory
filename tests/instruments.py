@@ -1,9 +1,9 @@
 import unittest
 
 from fractions import Fraction
-from pymusictheory.core.scales import Scale
-from pymusictheory.core.notes import PitchClass, Note
-from pymusictheory.instruments.coreinstruments import _Instrument, _StringedInstrument
+from trallala.core.scales import Scale
+from trallala.core.notes import PitchClass, Note
+from trallala.instruments.coreinstruments import _Instrument, _StringedInstrument
 
 class TestInstrument(unittest.TestCase):
 

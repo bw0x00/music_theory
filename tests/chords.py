@@ -1,9 +1,9 @@
 import unittest
 
-from pymusictheory.core.chords import Chord
-from pymusictheory.core.notes import Note, PitchClass
-from pymusictheory.core.intervals import Interval
-from pymusictheory.core.scales import Scale
+from trallala.core.chords import Chord
+from trallala.core.notes import Note, PitchClass
+from trallala.core.intervals import Interval
+from trallala.core.scales import Scale
 
 class TestChords(unittest.TestCase):
 

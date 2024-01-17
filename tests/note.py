@@ -1,8 +1,8 @@
 import unittest
 
 from fractions import Fraction
-from pymusictheory.core.notes import Note, PitchClass
-from pymusictheory.core.scales import ChromaticScale
+from trallala.core.notes import Note, PitchClass
+from trallala.core.scales import ChromaticScale
 
 class TestNotes(unittest.TestCase):
 

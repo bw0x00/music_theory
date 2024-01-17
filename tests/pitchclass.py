@@ -1,7 +1,7 @@
 import unittest
 
 from fractions import Fraction
-from pymusictheory.core.notes import Note, PitchClass
+from trallala.core.notes import Note, PitchClass
 
 
 class TestPitchClass(unittest.TestCase):

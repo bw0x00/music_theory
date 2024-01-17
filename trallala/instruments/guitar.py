@@ -1,5 +1,17 @@
 #!/usr/bin/env python3
 
+"""
+Translation of notes, chords, scales, ... to guitar freboard diagrams.
+
+Supports different amounts of frets, strings and different tunings.
+
+Typical usage examples:
+    guitar = Guitar('e2', tuning='standard')
+    print(guitar.fretboard.svg(trallala.core.notes.Note('c4')))
+
+"""
+
+
 from functools import singledispatchmethod
 import svg
 from textwrap import dedent
@@ -17,17 +29,30 @@ tunings = {
         }
 
 class Guitar(_StringedInstrument):
+    """Guitar class, customizable with parameters
 
-    def __init__(self, root_of_tuning: notes.Note=notes.Note('e2'), tuning='standard', strings=6, frets=24):
-        """
-            root_of_tuning: open Note of the lowest string
-            tuning: str_name of tuning (e.g., standard or drop) or list of
+    Attributes:
+        fretboard: FretBoard object for SVG output
+
+    """
+    def __init__(self,
+                 root_of_tuning: notes.Note=notes.Note('e2'),
+                 tuning='standard', strings=6, frets=24):
+        """ Initializes a Guitar object based on tuning and fretboard
+
+        Args:
+            root_of_tuning:
+                The lowest note of the used tuning in SPN (default: 'e2')
+            tuning:
+                str_name of tuning (e.g., standard or drop) or list of
                 semitone distances between strings or tuning as notes.Note for
-                open strings
-            strings: amount of strings
-            frets: amount of frets on the fretboard. Commonly 21 or 24
-
-            Default: E-Standard 6 String Guitar
+                open strings. (default: 'standard')
+            strings:
+                amount of strings (default: 6)
+            frets:
+                amount of frets on the fretboard. (default: 24)
+        Raises:
+            ValueError: An unsupported tuning was provided
         """
         t = self._dispatched_init(tuning, root_of_tuning, strings)
         if len(t) != strings:
@@ -71,8 +96,31 @@ class Guitar(_StringedInstrument):
 
 
 class FretBoard():
+    """Representation of the fretboard and definition of the SVG dimensions
 
+    FretBoard provides a parameterizable fretboard supporting SVG output for:
+        Scales, Chords, Notes, PitchClasses and Lists of Notes/PitchClasses
+    """
     def __init__(self,strings,opennotes,frets):
+        """ Initializes the fretboard and define the SVG dimensions
+
+        Args:
+            strings:
+                Amount of strings
+            opennotes:
+                Value of the open notes defining the tuning.
+                len(opennotes) must be equal to strings
+            frets:
+                Amount of frets
+        Property:
+            all_notes:
+                Multidimensional list with all notes on the fretboard:
+                    list[string][fret]
+        Raises:
+            ValueError: len(opennotes) != strings
+        """
+        if len(opennotes) != strings:
+            raise ValueError("Tuning does not fit amount of strings")
         self._strings = strings
         self._frets = frets
 
@@ -97,8 +145,12 @@ class FretBoard():
 
     @singledispatchmethod
     def get_indices(self, n):
-        """ Returns the (y,x) coordinates of notes, pitchclasses, scales or
-        chords
+        """ Returns the (y,x) coordinates of n on the fretboard
+
+        Args:
+            n:
+                List of notes, pitchclasses or single notes, pitchclases,
+                scales or chords.
         """
         raise NotImplementedError(f"not implemented for {type(n)}")
 
@@ -133,10 +185,10 @@ class FretBoard():
             ret.append( ", ".join( (str(x) for x in s) ))
         return "\n".join(ret)
 
+    # TODO: move all svg related stuff into output subpackge
     def _draw_fretboard(self) -> svg.SVG:
-        """
-            Prints the fretboards as an list of svg elements.
-            Must be placed in canvas.
+        """Prints the fretboards as an list of svg elements.
+        Must be placed in canvas.
         """
         innerspacing= self._innerspacing
         width = self._width
@@ -170,10 +222,9 @@ class FretBoard():
         return fretboard
 
     def _draw_notes(self, notes_list, left=False) -> list:
-        """
-            Returns svg elements to be added to the fretboard representing the
-            notes in "notes". Notes can be a list of notes.Note or
-            notes.PitchClass.
+        """Returns svg elements to be added to the fretboard representing the
+        notes in "notes". Notes can be a list of notes.Note or
+        notes.PitchClass.
         """
         innerspacing= self._innerspacing
         width = self._width
@@ -194,19 +245,19 @@ class FretBoard():
                 if len(n[0].name) == 1:
                     notes_svg.append(svg.Text(  x=innerspacing+fret_distance*x-3,
                                                 y=innerspacing+string_distance*y+3,
-                                                class_=['note'],
+                                                class_=['notebig'],
                                                 text=n[0].name.upper(),
                                                 fill='white'))
                 elif len(n[0].name) == 2:
                     notes_svg.append(svg.Text(  x=innerspacing+fret_distance*x-7,
                                                 y=innerspacing+string_distance*y+3,
-                                                class_=['note'],
+                                                class_=['notebig'],
                                                 text=n[0].name.upper(),
                                                 fill='white'))
                 elif len(n[0].name) > 2:
                     notes_svg.append(svg.Text(  x=innerspacing+fret_distance*x-10,
                                                 y=innerspacing+string_distance*y+3,
-                                                class_=['note'],
+                                                class_=['notebig'],
                                                 text=n[0].name.upper(),
                                                 fill='white'))
  
@@ -214,15 +265,31 @@ class FretBoard():
 
     @singledispatchmethod
     def svg(self, n) -> svg.SVG:
-        """
-            Creates an svg fretboard with
-            a) a single notes.Note/notes.PitchClass X of color for n=X, color='blue'
-            b) a list of notes.Note/notes.PitchClass of colors for n=( (notes.X1, color1),
+        """ Creates a fretboard diagram containing n
+
+        Creates an svg fretboard with
+        a) a single notes.Note/notes.PitchClass X of color for n=X, color='blue'
+        b) a list of notes.Note/notes.PitchClass of colors for n=( (notes.X1, color1),
                                                 notes.X2,color2
-            c) a chord for n=chords.Chord, root_color=color1, notes_color=color2
+        c) a chord for n=chords.Chord, root_color=color1, notes_color=color2
                 (default: red, blue)
-            d) a scale for n=scales.Scale, root_color=color1, notes_color=color2
+        d) a scale for n=scales.Scale, root_color=color1, notes_color=color2
                 (default: red, blue)
+
+        Args:
+            n:
+                Either note, pitchclass (or list of both) or scale or chord.
+                In case of list of notes or pitchclasses:
+                    The list contains tuple (note/pitchclass,svg_colorname)
+            color:
+                SVG name of color. Onlye used if n is single note or pitchclass
+            root_color:
+                SVG name of color used for the root note. Only used if n is
+                single chord or scale.
+            notes_color:
+                SVG name of color used for all other notes. Only used if n is
+                sinlge chord or scale.
+
         """
         fret_diagram = self._svg_fretboard[:]
         fret_diagram.extend(self._draw_notes(n))

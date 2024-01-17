@@ -1,6 +1,6 @@
 import unittest
 
-from pymusictheory.core.temperament import *
+from trallala.core.temperament import *
 
 
 class TestChords(unittest.TestCase):

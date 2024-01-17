@@ -1,14 +1,14 @@
 #!/bin/env python3
 
 import sys,os
-from pymusictheory.core.scales import Scale, scales_steps
-from pymusictheory.core.temperament import *
-from pymusictheory.core.notes import PitchClass
-from pymusictheory.instruments.guitar import Guitar
+from trallala.core.scales import Scale, scales_steps
+from trallala.core.temperament import *
+from trallala.core.notes import PitchClass
+from trallala.instruments.guitar import Guitar
 
 def main():
     print("\nGenerating all scales as defined in " +
-          "pymusictheory.scales for e-standard ")
+          "trallala.scales for e-standard ")
     print("Writing output into folder: " + sys.argv[1])
 
     dirname = sys.argv[1]
@@ -22,7 +22,7 @@ def main():
     for scale in scales_steps[t]:
         for root_numeric in range(t):
             pc = PitchClass(root_numeric)
-            filename = "".join(("svg_scale_guitar_",pc.name,"_", scale,".svg"))
+            filename = "".join(("scale_guitar_",pc.name,"_", scale,".svg"))
             print("".join((dirname,"/", filename, "> Scale '",pc.name,"_", scale )) )
             with open("/".join((dirname,filename)),'w') as f:
                 s = Scale(root=pc, scale=scale)

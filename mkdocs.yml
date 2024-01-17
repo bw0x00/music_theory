@@ -1,0 +1,11 @@
+site_name: Trallala
+
+theme:
+  name: "readthedocs"
+
+plugins:
+  - mkdocstrings
+
+nav:
+  - Introduction: index.md
+  - Examples: examples.md

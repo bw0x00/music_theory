@@ -2,10 +2,10 @@
 
 import sys,os
 import svg
-from pymusictheory.instruments.guitar import Guitar
-from pymusictheory.core import notes
-from pymusictheory.core import chords
-from pymusictheory.core import scales
+from trallala.instruments.guitar import Guitar
+from trallala.core import notes
+from trallala.core import chords
+from trallala.core import scales
 
 def main():
     print("\nPrint the fretboard for e standard/ 24frets to stdout")
