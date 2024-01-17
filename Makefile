@@ -3,7 +3,7 @@
 doc_generated := doc/generated
 pydoc_generated := $(doc_generated)/pydoc
 
-default: test clean prepare examples gendoc
+default: test clean prepare examples doc
 
 prepare:
 	mkdir $(doc_generated)
