@@ -1,17 +1,22 @@
-# Welcome to MkDocs
+# Introduction
 
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
+This site contains the documentation for the `trallala` project. 
+`trallala` is a library aiming to provide a more
+computer science oriented view on music theory. e.g., everything in
+`trallala` can work with semitone steps to archieve an array-like access to
+and definition of music objects. The usage of intervals is possible but optional.
 
-## Commands
+## Table of Contents
 
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.
+1. [Tutorials](tutorials.md)
+2. [Howto Guides](howto.md)
+3. [Reference](reference.md)
+4. [Explanation](explanation.md)
 
-## Project layout
+## Content
 
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        examples.md # Other markdown pages, images and other files.
+::: trallala
+
+## Links
+1. [Git](https://github.com/bw0x00/music_theory/)
+2. [Issues](https://github.com/bw0x00/music_theory/issues)

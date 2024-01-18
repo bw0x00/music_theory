@@ -49,14 +49,6 @@ def main():
                                             root_color="red", notes_color='green')
         print(svg,file=f)
 
-    x = "_chord_Cmaj_pitchclasses"
-    print("".join((dirname,"/", filename, x, ".svg> Fretbaord Chord->PitchClasses SVG'" )) )
-    with open("/".join((dirname, "".join( (filename, x,".svg") )))
-                ,'w') as f:
-        svg = g.fretboard.svg(chords.Chord(chord='major',root='c'),
-                                            root_color="red", notes_color='green')
-        print(svg,file=f)
-
     x = "_scale_c_major_pentatonic"
     print("".join((dirname,"/", filename, x, ".svg> Fretbaord C major Pentatonic SVG'" )) )
     with open("/".join((dirname, "".join( (filename, x,".svg") )))

@@ -4,9 +4,9 @@
 
 # TODO: move to site -> part of mkdoc
 examples_generated := examples
+img_doc := docs/img
 
-
-default: test clean prepare examples doc
+default: test clean prepare examples
 
 prepare:
 	#pass
@@ -24,8 +24,11 @@ examples: clean prepare
 doc: clean prepare
 	## todo: not working yet
 ##	python3 -m docgen.guitar_6string_e-standard_all_scales_all_roots $(doc_generated)
-	mkdocs build
+	python3 -m examples.guitar_fretboard_chord_Cmaj_pitchclasses $(img_doc)
+	python3 -m examples.guitar_fretboard_scale_major_pentatonic_c $(img_doc)
+	mkdocs serve 
 
 clean:
+	-rm  $(img_doc)/*.svg
 	-rm  $(examples_generated)/*.svg
 	-rm  $(examples_generated)/*.txt

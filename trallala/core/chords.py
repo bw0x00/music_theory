@@ -7,36 +7,7 @@ from . import notes
 from . import intervals
 
 # chord name to integeter notation mapping (semitone distance from root)
-chord_integer = {
-    12: {
-        'powerchord'        : (0, 7),
-        'powerchord2'       : (0, 7, 12),
-        'major'             : (0, 4, 7),
-        "major6"            : (0, 4, 7, 9),
-        'major7'            : (0, 4, 7, 11),
-		"major9"            : (0, 4, 7, 11, 14),
-		"major11"           : (0, 4, 7, 11, 14, 17),
-		"major13"           : (0, 4, 7, 11, 14, 17, 21),
-		"sus2"              : (0, 2, 7),
-		"sus4"              : (0, 5, 7),
-		"dominant7"         : (0, 4, 7, 10),
-		"dominant9"         : (0, 4, 7, 10, 14),
-		"dominant11"        : (0, 4, 7, 10, 14, 17),
-		"dominant13"        : (0, 4, 7, 10, 14, 17, 21),
-        'minor'             : (0, 3, 7),
-		"minor6"            : (0, 3, 7, 9),
-		"minor7"            : (0, 3, 7, 10),
-		"minorM7"           : (0, 3, 7, 11),
-		"minor9"            : (0, 3, 7, 10, 14),
-		"minor11"           : (0, 3, 7, 10, 14, 17),
-		"diminished"        : (0, 3, 6),
-		"diminished7"       : (0, 3, 6, 9),
-		"half_diminished7"  : (0, 3, 6, 10),
-		"augmented"         : (0, 4, 8),
-		"augmented7"        : (0, 4, 8, 10),
-		"dominant7sus4"     : (0, 5, 7, 10)
-    }
-}
+from ..config_chords import chord_integer
 
 
 class Chord:
@@ -84,8 +55,8 @@ class Chord:
         return tuple(x.distance for x in intervals)
 
     def get_chord(self) -> list:
-        """ Returns the list with the notes of the chord. Optional: provide
-        voicing as list of octaves per note in chord """
+        """ Returns the list with the notes of the chord.
+        """
         chord = []
         if self._voicing is None:
             root = self._chord[0]+4*self._scale.temperament.length
@@ -103,10 +74,13 @@ class Chord:
         return tuple([notes.PitchClass(n) for n in self.get_chord()])
 
     def get_frequencies(self) -> list:
-        """ Returns the list of the frequencies of the chord. List can contain
+        """ Returns the list of the frequencies of the chord.
+
+        List can contain
         frequencies of multiple octaves. Optional: An list of octave numbers
         can be provided. List must be of equal length to the chord and
-        transposes the corresponding chord note into the given octave. """
+        transposes the corresponding chord note into the given octave.
+        """
         chord = self.get_chord()
 
         freqs = []
@@ -118,7 +92,6 @@ class Chord:
         return self.get_chord()[key]
 
     def __str__(self):
-        """ asdas """
         return ", ".join(("/".join(self._scale.temperament.distance_to_name(x)) for x in self._chord))
 
     @singledispatchmethod

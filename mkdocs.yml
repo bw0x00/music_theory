@@ -6,6 +6,32 @@ theme:
 plugins:
   - mkdocstrings
 
+markdown_extensions:
+  - pymdownx.snippets
+
 nav:
-  - Introduction: index.md
-  - Examples: examples.md
+  - Introduction:
+    - index.md
+  - Tutorials:
+    - tutorials.md
+  - Howto:
+    - howto.md
+    - howto_chord_diagram.md
+    - howto_scale_diagram.md
+  - Reference:
+    - definitions.md
+    - core.notes:
+      - note.md
+      - pitchclass.md
+    - core.scales:
+      - chromaticscale.md
+      - scale.md
+    - core.chords:
+      - chord.md
+    - core.intervals:
+      - interval.md
+    - instruments.guitar:
+      - guitar.md
+      - fretboard.md
+  - Explanation:
+    - explanation.md

@@ -264,7 +264,7 @@ class FretBoard():
         return notes_svg
 
     @singledispatchmethod
-    def svg(self, n) -> svg.SVG:
+    def svg(self, n, color='green', root_color='red', notes_color='green') -> svg.SVG:
         """ Creates a fretboard diagram containing n
 
         Creates an svg fretboard with
