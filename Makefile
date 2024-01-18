@@ -15,8 +15,8 @@ test:
 	python3 -m unittest tests/*.py
 
 examples: clean prepare
-	python3 -m examples.standard_tuning_tet12_all_c_scales $(examples_generated)
-	python3 -m examples.standard_tuning_tet12_all_c_chords $(examples_generated)
+	python3 -m examples.standard_tuning_tet12_c_scales $(examples_generated)
+	python3 -m examples.standard_tuning_tet12_c_chords $(examples_generated)
 	python3 -m examples.standard_tuning_tet12_chords_intervals $(examples_generated)
 	python3 -m examples.standard_tuning_tet12_chords_intervals $(examples_generated)
 	python3 -m examples.guitar_fretboard_all_notes_e-standard $(examples_generated)

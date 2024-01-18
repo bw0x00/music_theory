@@ -19,8 +19,9 @@ def main():
         print("Output dir does not exist: " + dirname)
 
     for t in temperament:
-        for scale in scales_steps[temperament[t].length]:
-            filename = "".join(("standard_tuning_tet12_all_c_scales_",
+        # limit generation to two scales as examples
+        for scale in list(scales_steps[temperament[t].length].keys())[0:1]:
+            filename = "".join(("standard_tuning_tet12_c_scales_",
                                 root_note,str(octave),"_", scale,".txt"))
             print("".join((dirname,"/", filename, "> Scale '",root_note,"_", scale )) )
             with open("/".join((dirname,filename)),'w') as f:

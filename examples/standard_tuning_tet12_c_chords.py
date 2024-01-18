@@ -21,8 +21,9 @@ def main():
 
     for t in temperament:
         cs = ChromaticScale(temperament=temperament[t])
-        for chord in chord_integer[cs.temperament.length]:
-            filename = "".join(("standard_tuning_tet12_all_c_chords_",
+        # limit generation to the first two chords as examples
+        for chord in list(chord_integer[cs.temperament.length].keys())[0:1]:
+            filename = "".join(("standard_tuning_tet12_c_chords_",
                                 root_note,str(octave),"_", chord,".txt"))
             print("".join((dirname,"/", filename, "> Chord '",root_note,"_", chord  )) )
             with open("/".join((dirname,filename)),'w') as f:
