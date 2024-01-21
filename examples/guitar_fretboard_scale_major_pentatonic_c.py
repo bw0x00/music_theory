@@ -6,7 +6,7 @@ from trallala.instruments.guitar import Guitar
 from trallala.core import scales
 
 def main():
-    print("\nPrint the fretboard for e standard/ 24frets")
+    print("\nPrint the fretboard for e standard/ 12frets")
     print("Writing output into folder: " + sys.argv[1])
 
     dirname = sys.argv[1]
@@ -14,9 +14,9 @@ def main():
     if not os.path.isdir(dirname):
         print("Output dir does not exist: " + dirname)
 
-    # Initialize the Guitar object with 6 Strings, 24 Frets
+    # Initialize the Guitar object with 6 Strings, 12 Frets
     # and e-standard tuning
-    g = Guitar('e2', tuning='standard', strings=6, frets=24)
+    g = Guitar('e2', tuning='standard', strings=6, frets=12)
 
     filename = "guitar_fretboard_scale_major_pentatonic_c.svg"
 

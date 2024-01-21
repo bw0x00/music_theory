@@ -18,6 +18,7 @@ from textwrap import dedent
 from ..core import notes
 from ..core import scales
 from ..core import chords
+from ..core import intervals
 from .coreinstruments import _StringedInstrument
 
 
@@ -198,9 +199,10 @@ class FretBoard():
 
         fretboard = []
         fretboard.append(svg.Style(text=dedent("""
-                            .notebig {font: bold 12px sans-serif; fill: white }
+                            .notebig {font: bold 14px sans-serif; fill: white }
                             .notemedium{font: bold 12px sans-serif; fill: white }
-                            .notesmall{font: bold 12px sans-serif; fill: white }
+                            .notesmall{font: 8px sans-serif; fill: white }
+                            .watermark{font: 8px sans-serif; fill: black }
                                             """)))
         #nut
         fretboard.append(svg.Rect(x=innerspacing-5,y=innerspacing,width=10,
@@ -210,15 +212,23 @@ class FretBoard():
         #strings
         for i in range(self._strings):
             y = innerspacing + string_distance * i
-            fretboard.append(svg.Line(x1=innerspacing, x2=width-innerspacing, y1=y, y2=y,
-                                      stroke='black',stroke_width=5))
+            fretboard.append(svg.Line(x1=innerspacing-5,
+                                      x2=width-innerspacing+3, y1=y, y2=y,
+                                      stroke='black',stroke_width=4))
 
         #frets
         for i in range(self._frets+1):
             x = innerspacing + fret_distance * i
             fretboard.append(svg.Line(x1=x, x2=x, y1=innerspacing,
                                       y2=height-innerspacing,
-                                      stroke='black', stroke_width=5))
+                                      stroke='black', stroke_width=6))
+
+        #watermark
+        fretboard.append(svg.Text(  x=width-125,
+                                    y=height,
+                                    class_=['watermark'],
+                                    text="Generated with Trallala"))
+
         return fretboard
 
     def _draw_notes(self, notes_list, left=False) -> list:
@@ -234,7 +244,11 @@ class FretBoard():
 
         notes_svg = []
         for n in notes_list:
-            for (y,x) in self.get_indices(n[0]):
+            if type(n[0]) is intervals.Interval:
+                i = self.get_indices(notes_list[0][0] + n[0])
+            else:
+                i = self.get_indices(n[0])
+            for (y,x) in i:
                 if not left:
                     y = self._strings - (y+1)
                 notes_svg.append(svg.Circle(cx=innerspacing+fret_distance*x,
@@ -243,38 +257,48 @@ class FretBoard():
                                             stroke=n[1], stroke_width=1,
                                             fill=n[1] ))
                 if len(n[0].name) == 1:
-                    notes_svg.append(svg.Text(  x=innerspacing+fret_distance*x-3,
-                                                y=innerspacing+string_distance*y+3,
+                    notes_svg.append(svg.Text(  x=innerspacing+fret_distance*x-5,
+                                                y=innerspacing+string_distance*y+4,
                                                 class_=['notebig'],
                                                 text=n[0].name.upper(),
                                                 fill='white'))
                 elif len(n[0].name) == 2:
+                    notes_svg.append(svg.Text(  x=innerspacing+fret_distance*x-8,
+                                                y=innerspacing+string_distance*y+4,
+                                                class_=['notebig'],
+                                                text=n[0].name.upper(),
+                                                fill='white'))
+                elif len(n[0].name) == 6:
+                    notes_svg.append(svg.Text(  x=innerspacing+fret_distance*x-11,
+                                                y=innerspacing+string_distance*y+3,
+                                                class_=['notesmall'],
+                                                text=n[0].name.upper().replace("/"
+                                                                               ," "),
+                                                fill='white'))
+                elif len(n[0].name) > 2:
                     notes_svg.append(svg.Text(  x=innerspacing+fret_distance*x-7,
                                                 y=innerspacing+string_distance*y+3,
                                                 class_=['notebig'],
                                                 text=n[0].name.upper(),
                                                 fill='white'))
-                elif len(n[0].name) > 2:
-                    notes_svg.append(svg.Text(  x=innerspacing+fret_distance*x-10,
-                                                y=innerspacing+string_distance*y+3,
-                                                class_=['notebig'],
-                                                text=n[0].name.upper(),
-                                                fill='white'))
- 
         return notes_svg
 
     @singledispatchmethod
-    def svg(self, n, color='green', root_color='red', notes_color='green') -> svg.SVG:
+    def svg(self, n, color='green', root_color='red', notes_color='green',
+            intervals=False) -> svg.SVG:
         """ Creates a fretboard diagram containing n
 
         Creates an svg fretboard with
         a) a single notes.Note/notes.PitchClass X of color for n=X, color='blue'
         b) a list of notes.Note/notes.PitchClass of colors for n=( (notes.X1, color1),
                                                 notes.X2,color2
-        c) a chord for n=chords.Chord, root_color=color1, notes_color=color2
-                (default: red, blue)
+        c) a chord for n=chords.Chord, root_color=color1, notes_color=color2,
+        intervals=False  (default: root_color=red, notes_color=blue)
+            If 'intervals' -> output will use Interval names instead of
+            PitchClass names
         d) a scale for n=scales.Scale, root_color=color1, notes_color=color2
                 (default: red, blue)
+                printed in 'root_color', intervalls in 'notes_color'
 
         Args:
             n:
@@ -302,16 +326,24 @@ class FretBoard():
         return self.svg( ((n,color),) )
 
     @svg.register
-    def _2(self, n: chords.Chord, root_color="red", notes_color="green"):
+    def _2(self, n: chords.Chord, root_color="red", notes_color="green",
+           intervals=False):
         n_list = []
         if n.voicing:
             n_list.append( (n[0], root_color) )
             for x in n[1:]:
-                n_list.append( (x,notes_color) )
+                if intervals:
+                    n_list.append( (x-n[0],notes_color) )
+                else:
+                    n_list.append( (x,notes_color) )
         else:
             n_list.append( (n.get_pitchclasses()[0], root_color) )
-            for x in n.get_pitchclasses()[1:]:
-                n_list.append( (x, notes_color) )
+#            for x in n.get_pitchclasses()[1:]:
+            for x in n[1:]:
+                if intervals:
+                    n_list.append( (x-n[0],notes_color) )
+                else:
+                    n_list.append( (notes.PitchClass(x), notes_color) )
 
         return self.svg(n_list)
 

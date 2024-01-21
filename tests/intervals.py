@@ -47,7 +47,7 @@ class TestIntervals(unittest.TestCase):
         j = Interval('d5')
         self.assertTrue(str(j) == 'tritone')
         self.assertTrue(j.distance == 6)
-        self.assertTrue(j.name == 'tritone' )
+        self.assertTrue(j.longname == 'tritone' )
         self.assertTrue(j.short_names == ('d5', 'A4'))
         k = Interval('semitone')
         self.assertTrue(k.short_names == ('m2', 'A1'))

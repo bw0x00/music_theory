@@ -25,6 +25,8 @@ doc: clean prepare
 	## todo: not working yet
 ##	python3 -m docgen.guitar_6string_e-standard_all_scales_all_roots $(doc_generated)
 	python3 -m examples.guitar_fretboard_chord_Cmaj_pitchclasses $(img_doc)
+	python3 -m examples.guitar_fretboard_chord_Cmaj_voicing $(img_doc)
+	python3 -m examples.guitar_fretboard_chord_Cmaj_intervals $(img_doc)
 	python3 -m examples.guitar_fretboard_scale_major_pentatonic_c $(img_doc)
 	mkdocs serve 
 

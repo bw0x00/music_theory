@@ -4,6 +4,7 @@ from fractions import Fraction
 from trallala.core.scales import Scale
 from trallala.core.notes import PitchClass, Note
 from trallala.core.chords import Chord
+from trallala.core.intervals import Interval
 from trallala.instruments.guitar import Guitar
 
 class TestGuitar(unittest.TestCase):
@@ -30,6 +31,20 @@ class TestGuitar(unittest.TestCase):
         f = g.fretboard.all_notes
         self.assertTrue(len(f) == 6)
         self.assertTrue(min( (len(x) == 25 for x in f) ))
+
+    def test_svg(self):
+        ### test without verification of svg...
+        g=Guitar()
+        c = Chord(root='c', chord='major')
+        s = Scale(scale='major', root='c4')
+        p = PitchClass(3)
+        n = Note('e3')
+
+        svg = g.fretboard.svg(c)
+        svg = g.fretboard.svg(s)
+        svg = g.fretboard.svg(p)
+        svg = g.fretboard.svg(n)
+        svg = g.fretboard.svg(n+Interval('perfect_fifth'))
 
 
     def test_getindices(self):

@@ -90,5 +90,14 @@ class TestChords(unittest.TestCase):
         c4.voicing = (4,4,4)
         self.assertTrue(c4 in scale)
 
+    def test_chord_to_interval(self):
+        c = Chord('major',root='c',voicing=(4,4,4))
+        c_i = c.get_chord_as_interval()
+
+        self.assertTrue(c_i[0]    == Note('c4'))
+        self.assertTrue(c_i[1][0] == Interval('major_third'))
+        self.assertTrue(c_i[1][1] == Interval('perfect_fifth'))
+
+
 if __name__ == '__main__':
     unittest.main()

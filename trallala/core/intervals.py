@@ -4,36 +4,7 @@ from functools import singledispatchmethod
 
 from .temperament import _CoreChromaticScale
 from . import notes
-
-_reverse_interval_distance = {
-        12: {
-            0   : ('perfect_unison',        'P1',   'd2',   'root'          ),
-            1   : ('minor_second',          'm2',   'A1',   'semitone'      ),
-            2   : ('major_second',          'M2',   'd3',   'tone'          ),
-            3   : ('minor_third',           'm3',   'A2'                    ),
-            4   : ('major_third',           'M3',   'd4'                    ),
-            5   : ('perfect_fourth',        'P4',   'A3'                    ),
-            6   : ('tritone',               'd5',   'A4'                    ),
-            7   : ('perfect_fifth',         'P5',   'd6'                    ),
-            8   : ('minor_sixth',           'm6',   'A5'                    ),
-            9   : ('major_sixth',           'M6',   'd7'                    ),
-            10  : ('minor_seventh',         'm7',   'A6'                    ),
-            11  : ('major_seventh',         'M7',   'd8'                    ),
-            12  : ('perfect_octave',        'P8',   'A7',   'd9'            ),
-            13  : ('minor_ninth',           'm9',   'A8'                    ),
-            14  : ('major_ninth',           'M9',   'd10'                   ),
-            15  : ('minor_tenth',           'm10',  'A9'                    ),
-            16  : ('major_tenth',           'M10',  'd11'                   ),
-            17  : ('perfect_eleventh',      'P11',  'A10'                   ),
-            18  : (                         'd12',  'A11'                   ),
-            19  : ('perfect_twelfth',       'P12',  'd13',  'tritave'       ),
-            20  : ('minor_thirteenth',      'm13',  'A12'                   ),
-            21  : ('major_thirteenth',      'M13',  'd14'                   ),
-            22  : ('minor_fourteenth',      'm14',  'A13'                   ),
-            23  : ('major_fourteenth',      'M14',  'd15'                   ),
-            24  : ('perfect_fifteenth',     'P15',  'A14',  'double_octave' )
-            }
-        }
+from ..config_intervals import reverse_interval_distance
 
 
 class Interval:
@@ -43,11 +14,12 @@ class Interval:
         name. Optional: Provide an alternative chromaticscale if 12TET is not
         used.
         """
+        # TODO: use singledispatchmethod
         self._chromaticscale = chromaticscale
-        self._reverse_interval_distance = _reverse_interval_distance[chromaticscale.temperament.length]
+        self.reverse_interval_distance = reverse_interval_distance[chromaticscale.temperament.length]
         self._interval_distance = dict()
-        for k in self._reverse_interval_distance:
-            for n in self._reverse_interval_distance[k]:
+        for k in self.reverse_interval_distance:
+            for n in self.reverse_interval_distance[k]:
                 self._interval_distance[n] = k
 
         if type(interval) is int:
@@ -55,21 +27,25 @@ class Interval:
             if interval < 0:
                 raise ValueError('Interval cannot be created from negative'
                                  + ' distance')
-            self._name = self._reverse_interval_distance[interval][0]
         elif type(interval) is str:
            self._distance = self._interval_distance[interval]
            # ensure that name is always full name (e.g., major_fifth) 
            # and not short name. Exception: distance=6 --> 'tritone'
-           self._name = self._reverse_interval_distance[self._distance][0]
         else:
             raise ValueError("'interval' must be int or str, not"
                              + f"'{type(interval)}")
+        if self._distance == 6 or self._distance == 18:
+            self._name = self.reverse_interval_distance[self._distance][-1]
+        else:
+            self._name = self.reverse_interval_distance[self._distance][0]
 
     def __str__(self):
         return self._name
 
     @singledispatchmethod
     def __eq__(self, a):
+        if type(a) == type(self):
+            return a.name == self.name
         return NotImplemented
 
     @__eq__.register
@@ -114,12 +90,16 @@ class Interval:
         return self._distance
 
     @property
-    def name(self):
+    def longname(self):
         return self._name
 
     @property
+    def name(self):
+        return "/ ".join(self.short_names)
+
+    @property
     def short_names(self):
-        return self._reverse_interval_distance[self._distance][1:3]
+        return self.reverse_interval_distance[self._distance][1:3]
 
 
 
@@ -127,6 +107,12 @@ class Interval:
 @notes.Note.__sub__.register
 def _n1(note1, note2: notes.Note):
     return Interval(note1.distance - note2.distance)
+
+# add pitchclass + interval = pitchclass  to note pitchclass
+@notes.PitchClass.__add__.register
+def _n1(pc1, i: Interval):
+    return notes.PitchClass(pc1.numeric + i.distance)
+
 
 
 if __name__ == '__main__':

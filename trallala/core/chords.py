@@ -54,6 +54,19 @@ class Chord:
     def _chord_int_from_intervals(self, intervals):
         return tuple(x.distance for x in intervals)
 
+    def get_chord_as_interval(self) -> tuple:
+        """ Returns the chord as a  root note and intervals
+
+        Returns:
+            tuple(root, tuple(Interval1..n))
+        """
+        ret = []
+        c = self.get_chord()
+        for n in c[1:]:
+            ret.append(n-c[0])
+
+        return (c[0], tuple(ret))
+
     def get_chord(self) -> list:
         """ Returns the list with the notes of the chord.
         """

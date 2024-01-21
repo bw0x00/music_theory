@@ -327,6 +327,12 @@ class PitchClass:
         return False
 
     @singledispatchmethod
+    def __add__(self,a):
+        return NotImplemented
+
+    ## add for self + Interval added from core.intervals
+
+    @singledispatchmethod
     def __contains__(self,a):
         return NotImplemented
 
