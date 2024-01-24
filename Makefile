@@ -13,6 +13,7 @@ prepare:
 
 test:
 	python3 -m unittest tests/*.py
+	pylint --fail-under=9 trallala
 
 examples: clean prepare
 	python3 -m examples.standard_tuning_tet12_c_scales $(examples_generated)

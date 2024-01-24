@@ -228,9 +228,8 @@ class Chord:
 
     @__contains__.register
     def _3(self,a: intervals.Interval):
-        for i in range(len(self._chord)):
-            print( self._chord[i] - self._chord[0])
-            if a == self._chord[i] - self._chord[0]:
+        for note in self._chord:
+            if a == note - self._chord[0]:
                 return True
         return False
 
@@ -242,7 +241,6 @@ class Chord:
 
     @__contains__.register
     def _5(self,a: int):
-#      return self.__contains__(float(a))
         return float(a) in self
 
     def __iter__(self):
@@ -250,14 +248,17 @@ class Chord:
 
     @property
     def chord_int(self):
-        return self._chord
+        """ Chord as integer tuple
+        """
+        return self._chord[:]
 
     @property
     def voicing(self):
+        """ Current voicing of this chord
+        """
         if self._voicing:
             return self._voicing[:]
-        else:
-            return None
+        return None
 
     @voicing.setter
     def voicing(self, voicing):
