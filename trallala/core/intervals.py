@@ -66,6 +66,10 @@ class Interval:
     def _2(self, a: tuple):
         return self == list(a)
 
+    @__eq__.register
+    def _3(self, a: int):
+        return self._distance == a
+
     @singledispatchmethod
     def __lt__(self,a):
         if type(a) is Interval:

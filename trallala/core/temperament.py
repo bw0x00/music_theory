@@ -3,7 +3,7 @@
 """ Core definitions of temperaments, steps per octace
 
     This packages supports TET12 by default. Additional temperaments can be
-    added to the temperament dict and afterwards used to initialize a 
+    added to the temperament dict and afterwards used to initialize a
     chromaticscale:
 
     temperament = {
@@ -11,8 +11,9 @@
     }
 """
 
-from fractions import Fraction
 import re
+
+from fractions import Fraction
 
 
 # definition of temperaments
@@ -50,9 +51,9 @@ class TwelveTET():
     }
 
     def __init__(self):
-        reverse_semitone_distance = dict()
-        for k in self._semitone_distance:
-            j = self._semitone_distance[k]
+        reverse_semitone_distance = {}
+        for k, value in self._semitone_distance.items():
+            j = value
             try:
                 reverse_semitone_distance[j].append(k)
             except KeyError:
@@ -110,24 +111,27 @@ class TwelveTET():
         name = name.lower()
         if name in self._semitone_distance:
             return self._semitone_distance[name]
-        else:
-            raise ValueError(
+        raise ValueError(
                 f'Bad note name "{name}". Note name of pitchclass required')
 
     @property
     def length(self):
+        """ Length of temperament
+        """
         return self._len
 
 
-temperament = dict()
+temperament = {}
 
 
-def init_temperament():
+def _init_temperament():
+    """ Initializtion of temperament dict
+    """
     # Equal Temeperament
     temperament['12TET'] = TwelveTET()
 
 
-init_temperament()
+_init_temperament()
 
 
 class _CoreChromaticScale:
@@ -148,63 +152,102 @@ class _CoreChromaticScale:
 
         Creates Chromatic Scale from given note (Scientific Pitch Notation)
         and a temperament distance list. For non-12 steps scales, a list of
-        tone with the correpsonding half-tone distance must be be provided 
+        tone with the correpsonding half-tone distance must be be provided
         in addition. Default: A4=440Hz and 12TET"""
 
-        if type(note) is not list and type(note) is not tuple:
+        if not isinstance(note, (list, tuple)):
             raise ValueError(f"Wrong anchor note type: {type(note)}")
         if temperament.get_note_frequency(note[1], temperament.length) != note[1]*2:
             raise ValueError('len(temperament) != one octave')
 
         self._temperament = temperament
         self._anchor = note[1]
-        self._anchor_distance = self.SPN_to_distance(note[0])
+        self._anchor_distance = self.spn_to_distance(note[0])
 
     def get_octaves(self):
         """ returns a full octave from An to An+1 (including). i.e., the list
         is len(temperament)+1 """
-        octaves = dict()
+        octaves = {}
         for o in range(self._number_octaves):
             octaves[o] = self._calc_octave(o)
         return octaves
 
     def _calc_octave(self, octave_number):
         """ Calculates the octave number n from Cn to Cn+1 """
-        ret = list()
+        ret = []
         for i in range(len(self._temperament)+1):
             ret.append(
                 self._temperament.get_note_frequency(self._anchor,
-                                                     self.temperament.length*octave_number-self._anchor_distance + i))
+                                                     self.temperament.length*octave_number \
+                                                        -self._anchor_distance + i))
         return ret
 
     @property
     def temperament(self):
+        """  Temperament used by this ChromaticScale
+        """
         return self._temperament
 
     @property
     def anchor(self):
-        return (self.SPN_from_distance(self._anchor_distance), self._anchor)
+        """ Used Anchor not as (SPN, Frequency)
+        """
+        return (self.spn_from_distance(self._anchor_distance), self._anchor)
 
-    def SPN_to_distance(self, note):
-        """ Calculates semitone distance of note in SPN to C0 """
-        (note_name, octave) = self.split_SPN(note)
+    def spn_to_distance(self, note: str):
+        """ Calculates semitone distance of note in SPN to C0
+
+        Arg:
+            note:
+                Note as SPN string
+
+        Returns:
+            Semitone distance to C0 as int
+        """
+        (note_name, octave) = self.split_spn(note)
         return int(octave) * self.temperament.length + self.temperament.name_to_distance(note_name)
 
-    def SPN_from_distance(self, distance: int):
+    def spn_from_distance(self, distance: int):
+        """ Semitone Distance to C= to SPN
+
+        Args:
+                distance:
+                    Semitone distance to C0
+
+        Returns:
+            SPN name as str
+        """
         l = len(self._temperament)
         note = self._temperament.distance_to_name(distance % l)
         octave = int((distance-distance % l) / l)
-#        return ''.join((note[0], str(octave)))
         return "/".join( [''.join((x,str(octave) )) for x in note]  )
 
-    def split_SPN(self, spn: str):
+    def split_spn(self, spn: str):
+        """ Splits an SPN into note name and octave
+
+        Args:
+            spn:
+                SPN name as str
+
+        Returns:
+            tuple(note name, octave)
+
+        Raises:
+            ValueError in case of invalid SPN
+
+        """
         match = re.match(r"([abcdefg][b#]?)([0-9])", spn.lower(), re.I)
         if match:
             return match.groups()
-        else:
-            raise ValueError(f'Bad note name {spn}. Note name in SPN required')
+        raise ValueError(f'Bad note name {spn}. Note name in SPN required')
 
     def frequencyof(self, distancetoc0):
+        """ Frequency of a semitone distance to C0
+
+        Args:
+            distancetoc0:
+                Semitone distance to C0 in int
+        """
         return self._temperament.get_note_frequency(self._anchor,
                                                     distancetoc0-self._anchor_distance)
 

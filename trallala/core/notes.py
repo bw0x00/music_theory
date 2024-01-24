@@ -8,7 +8,6 @@ classes like scales, chords or instruments.
 """
 
 from functools import singledispatchmethod
-import re
 
 from .temperament import _CoreChromaticScale
 
@@ -30,7 +29,7 @@ class Note:
             Frequency in Hz of the note
     """
     @singledispatchmethod
-    def __init__(self, note, chromaticscale=_CoreChromaticScale()):
+    def __init__(self, note , chromaticscale=_CoreChromaticScale()):
         """ Initializes a Note Object
 
         Creates a Note Object from another Note object, SPN, distance to C0 (int) or a frequency
@@ -45,26 +44,26 @@ class Note:
             ValueError:
                 Frequency, SPN, distance does not usable to create note from
         """
-        if type(note) == type(self):
+        if isinstance(note, Note):
             self._shared_init(note.distance, chromaticscale)
         else:
             raise ValueError("Note must be initilized with SPN, int distance to C0"
                              + " or a frequence")
 
-        if type(chromaticscale) is not _CoreChromaticScale:
+        if not isinstance(chromaticscale, _CoreChromaticScale):
             chromaticscale = _CoreChromaticScale(chromaticscale.anchor,
                                                  chromaticscale.temperament)
 
     @__init__.register
     def _1(self, note: int, chromaticscale=_CoreChromaticScale()):
-        if type(chromaticscale) is not _CoreChromaticScale:
+        if not isinstance(chromaticscale, _CoreChromaticScale):
             chromaticscale = _CoreChromaticScale(chromaticscale.anchor,
                                                  chromaticscale.temperament)
         self._shared_init(distancetoc0=note, chromaticscale=chromaticscale)
 
     @__init__.register
     def _2(self, note: float, chromaticscale=_CoreChromaticScale()):
-        if type(chromaticscale) is not _CoreChromaticScale:
+        if not isinstance(chromaticscale, _CoreChromaticScale):
             chromaticscale = _CoreChromaticScale(chromaticscale.anchor,
                                                  chromaticscale.temperament)
         success = False
@@ -84,13 +83,13 @@ class Note:
 
     @__init__.register
     def _3(self, note: str, chromaticscale=_CoreChromaticScale()):
-        if type(chromaticscale) is not _CoreChromaticScale:
+        if not isinstance(chromaticscale, _CoreChromaticScale):
             chromaticscale = _CoreChromaticScale(chromaticscale.anchor,
                                                  chromaticscale.temperament)
-        self._shared_init(chromaticscale.SPN_to_distance(note), chromaticscale)
+        self._shared_init(chromaticscale.spn_to_distance(note), chromaticscale)
 
     def _shared_init(self, distancetoc0, chromaticscale):
-        self._name = chromaticscale.SPN_from_distance(distancetoc0)
+        self._name = chromaticscale.spn_from_distance(distancetoc0)
         self._distance = distancetoc0
         self._chromaticscale = chromaticscale
 
@@ -98,17 +97,15 @@ class Note:
     def __eq__(self, a):
         """ Equal tests based on SPN, frequency or distance
         """
-        if type(a) == type(self):
+        if isinstance(a, Note):
             return a.name == self.name
-        else:
-            return NotImplemented 
+        return NotImplemented
 
     @__eq__.register
     def _1(self, a: int):
         if a == self.distance:
             return True
-        else:
-            return self == float(a)
+        return self == float(a)
 
     @__eq__.register
     def _2(self, a: float):
@@ -120,10 +117,9 @@ class Note:
 
     @singledispatchmethod
     def __ge__(self, a):
-        if type(a) == type(self):
+        if isinstance(a, Note):
             return a.distance <= self.distance
-        else:
-            return NotImplemented
+        return NotImplemented
 
     @__ge__.register
     def _1(self, a: int):
@@ -135,14 +131,13 @@ class Note:
 
     @__ge__.register
     def _3(self, a: str):
-        return self._chromaticscale.SPN_to_distance(a) <= self.distance
+        return self._chromaticscale.spn_to_distance(a) <= self.distance
 
     @singledispatchmethod
     def __le__(self, a):
-        if type(a) == type(self):
+        if isinstance(a, Note):
             return a.distance >= self.distance
-        else:
-            return NotImplemented
+        return NotImplemented
 
     @__le__.register
     def _1(self, a: int):
@@ -154,14 +149,13 @@ class Note:
 
     @__le__.register
     def _3(self, a: str):
-        return self._chromaticscale.SPN_to_distance(a) >= self.distance
+        return self._chromaticscale.spn_to_distance(a) >= self.distance
 
     @singledispatchmethod
     def __gt__(self, a):
-        if type(a) == type(self):
+        if isinstance(a, Note):
             return a.distance < self.distance
-        else:
-            return NotImplemented
+        return NotImplemented
 
     @__gt__.register
     def _1(self, a: int):
@@ -173,14 +167,13 @@ class Note:
 
     @__gt__.register
     def _3(self, a: str):
-        return self._chromaticscale.SPN_to_distance(a) < self.distance
+        return self._chromaticscale.spn_to_distance(a) < self.distance
 
     @singledispatchmethod
     def __lt__(self, a):
-        if type(a) == type(self):
+        if isinstance(a, Note):
             return a.distance > self.distance
-        else:
-            return NotImplemented
+        return NotImplemented
 
     @__lt__.register
     def _1(self, a: int):
@@ -192,7 +185,7 @@ class Note:
 
     @__lt__.register
     def _3(self, a: str):
-        return self._chromaticscale.SPN_to_distance(a) > self.distance
+        return self._chromaticscale.spn_to_distance(a) > self.distance
 
     @singledispatchmethod
     def __sub__(self, a):
@@ -219,11 +212,9 @@ class Note:
         if a >= 1:
             return Note(int(self.distance+(a-1)*self._chromaticscale.temperament.length),
                                 self._chromaticscale)
-        elif 0 < a < 1:
+        if 0 < a < 1:
             return self/(1/a)
-        else:
-            raise TypeError(
-                "Multiplication of 'Note' with numbers <= 0 not allowed")
+        raise TypeError("Multiplication of 'Note' with numbers <= 0 not allowed")
 
     def __rtruediv__(self, a: int):
         """ not implemented; Throws TypeError if called """
@@ -235,17 +226,17 @@ class Note:
         if a >= 1:
             return Note(int(self.distance-(a-1)*self._chromaticscale.temperament.length),
                                 self._chromaticscale)
-        elif 1 > a > 0:
+        if 1 > a > 0:
             return self * (1/a)
-        else:
-            raise ValueError(
-                "Division of 'Note' with numbers <= 0 not allowed")
+        raise ValueError("Division of 'Note' with numbers <= 0 not allowed")
 
     def __str__(self):
         return self._name
 
     @property
     def name(self):
+        """ Name/ SPN of this Note
+        """
         return self._name
 
     @property
@@ -255,6 +246,8 @@ class Note:
 
     @property
     def frequency(self):
+        """ Frequency of this Note
+        """
         return self._chromaticscale.frequencyof(self._distance)
 
 
@@ -269,7 +262,7 @@ class PitchClass:
     """
 
     def __init__(self, note, chromaticscale=_CoreChromaticScale()):
-        """ initializes the PitchClass 
+        """ initializes the PitchClass
 
         Pitchclass can be initialized from a note, SPN,  distance to C0,
         PitchClass numeric (c=0,...) or frequency
@@ -292,8 +285,8 @@ class PitchClass:
         self._chromaticscale = chromaticscale
 
         self._pc_numeric = n.distance % chromaticscale.temperament.length
-        self._pc_name = chromaticscale.split_SPN(n.name)[0]
-        pc = list()
+        self._pc_name = chromaticscale.split_spn(n.name)[0]
+        pc = []
         octaves = chromaticscale.get_octaves()
         for octave in octaves:
             pc.append(Note(self._pc_numeric)*(octave+1))
@@ -310,10 +303,9 @@ class PitchClass:
 
     @singledispatchmethod
     def __eq__(self, a):
-        if type(a) is PitchClass:
+        if isinstance(a,  PitchClass):
             return a.numeric == self.numeric
-        else:
-            return NotImplemented
+        return NotImplemented
 
     @__eq__.register
     def _1(self, a: str):
@@ -348,10 +340,14 @@ class PitchClass:
 
     @property
     def name(self):
+        """ Name of the pitchclass
+        """
         return self._pc_name
 
     @property
     def numeric(self):
+        """ Distance in int to the Note C
+        """
         return self._pc_numeric
 
 

@@ -43,7 +43,7 @@ class ChromaticScale(_CoreChromaticScale):
         list of Note objects"""
         ret = list()
         for i in range(len(self._temperament)+1):
-            anchor = (self.SPN_from_distance(
+            anchor = (self.spn_from_distance(
                 self._anchor_distance), self._anchor)
             ret.append(notes.Note(i+self.temperament.length*octave_number,
                                   chromaticscale=_CoreChromaticScale(anchor,
@@ -157,7 +157,7 @@ class Scale(ChromaticScale):
     @__contains__.register
     def _3(self, a: notes.Note):
         structured_scale = self.get_octaves()
-        octave = int(self.SPN_to_distance(a.name) \
+        octave = int(self.spn_to_distance(a.name) \
                         / self.temperament.length)
 
         return str(a) in  structured_scale[octave]

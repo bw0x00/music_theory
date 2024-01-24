@@ -27,6 +27,7 @@ class TestIntervals(unittest.TestCase):
         i = Interval(7)
         n1 = Note('c4')
         n2 = Note('g4')
+        self.assertTrue(7 == i)
         self.assertTrue([n2,n1] == i)
         self.assertTrue((n2,n1) == i)
 

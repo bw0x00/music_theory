@@ -11,9 +11,9 @@ Typical usage examples:
 
 """
 
+import svg
 
 from functools import singledispatchmethod
-import svg
 from textwrap import dedent
 from ..core import notes
 from ..core import scales
@@ -38,7 +38,7 @@ class Guitar(_StringedInstrument):
     """
     def __init__(self,
                  root_of_tuning: notes.Note=notes.Note('e2'),
-                 tuning='standard', strings=6, frets=24):
+                 tuning: str='standard', strings: int=6, frets: int=24):
         """ Initializes a Guitar object based on tuning and fretboard
 
         Args:
@@ -70,7 +70,7 @@ class Guitar(_StringedInstrument):
     @_dispatched_init.register(tuple)
     @_dispatched_init.register(list)
     def _1(self, tuning, root: notes.Note, *args, **kwargs):
-        if min([type(x) is int for x in tuning]):
+        if min(isinstance(x, int) for x in tuning):
             t= []
             for s in tuning:
                 if len(t) > 0:
@@ -78,12 +78,12 @@ class Guitar(_StringedInstrument):
                 else:
                     t.append(notes.Note(root))
             return tuple(t)
-        if min([type(x) is str for x in tuning]):
+        if min(isinstance(x, str) for x in tuning):
             tuning = ( notes.Note(x) for x in tuning )
-        if min([type(x) is notes.Note for x in tuning]):
+        if min(isinstance(x, notes.Note) for x in tuning):
             t = tuning
             return tuple(t)
-        ValueError("Unsupported tuning defintion: Definition must be"
+        raise ValueError("Unsupported tuning defintion: Definition must be"
                    + " semitone distance between strings"
                    + " XOR notes.Note for open strings")
 
@@ -93,6 +93,8 @@ class Guitar(_StringedInstrument):
 
     @property
     def fretboard(self):
+        """ Fretboard object of the guitar
+        """
         return FretBoard(self._strings,self._tuning,self._frets)
 
 
@@ -102,7 +104,7 @@ class FretBoard():
     FretBoard provides a parameterizable fretboard supporting SVG output for:
         Scales, Chords, Notes, PitchClasses and Lists of Notes/PitchClasses
     """
-    def __init__(self,strings,opennotes,frets):
+    def __init__(self,strings: int, opennotes: tuple, frets: int):
         """ Initializes the fretboard and define the SVG dimensions
 
         Args:
@@ -120,6 +122,11 @@ class FretBoard():
         Raises:
             ValueError: len(opennotes) != strings
         """
+
+        # pylint: disable=too-many-instance-attributes
+        # Required to store SVG and fretboard parameters.
+
+
         if len(opennotes) != strings:
             raise ValueError("Tuning does not fit amount of strings")
         self._strings = strings
@@ -141,11 +148,8 @@ class FretBoard():
         self._fret_distance   = (self._width -2*self._innerspacing)/(self._frets)
         self._svg_fretboard = self._draw_fretboard()
 
-    def __iter__(self):
-        return self._fretboard.__iter__()
-
     @singledispatchmethod
-    def get_indices(self, n):
+    def get_indices(self, n: notes.Note):
         """ Returns the (y,x) coordinates of n on the fretboard
 
         Args:
@@ -158,9 +162,9 @@ class FretBoard():
     @get_indices.register
     def _1(self, n: notes.Note):
         ret = [] * self._strings
-        for s in range(len(self._notes)):
-            for f in range(len(self._notes[s])):
-                if n == self._notes[s][f]:
+        for s, note_list in enumerate(self._notes):
+            for f, note in enumerate(note_list):
+                if n == note:
                     ret.append( (s,f) )
         return tuple(ret)
 
@@ -176,7 +180,7 @@ class FretBoard():
     def _3(self, n: scales.Scale):
         ret = []
         for note in n:
-            if note >= self._notes[0][0] and note <= self._notes[-1][-1]:
+            if self._notes[0][0] <= note <= self._notes[-1][-1]:
                 ret.append(self.get_indices(note))
         return tuple(ret)
 
@@ -237,14 +241,12 @@ class FretBoard():
         notes.PitchClass.
         """
         innerspacing= self._innerspacing
-        width = self._width
-        height = self._height
         string_distance = self._string_distance
         fret_distance   = self._fret_distance
 
         notes_svg = []
         for n in notes_list:
-            if type(n[0]) is intervals.Interval:
+            if isinstance(n[0], intervals.Interval):
                 i = self.get_indices(notes_list[0][0] + n[0])
             else:
                 i = self.get_indices(n[0])
@@ -284,8 +286,8 @@ class FretBoard():
         return notes_svg
 
     @singledispatchmethod
-    def svg(self, n, color='green', root_color='red', notes_color='green',
-            intervals=False) -> svg.SVG:
+    def svg(self, n, color: str='green', root_color: str='red',
+            notes_color: str='green', intervals: tuple=False) -> svg.SVG:
         """ Creates a fretboard diagram containing n
 
         Creates an svg fretboard with
@@ -338,7 +340,6 @@ class FretBoard():
                     n_list.append( (x,notes_color) )
         else:
             n_list.append( (n.get_pitchclasses()[0], root_color) )
-#            for x in n.get_pitchclasses()[1:]:
             for x in n[1:]:
                 if intervals:
                     n_list.append( (x-n[0],notes_color) )
@@ -357,6 +358,8 @@ class FretBoard():
 
     @property
     def all_notes(self):
+        """ All notes.Notes of the fretbaord
+        """
         return self._notes
 
 if __name__ == "__main__":
